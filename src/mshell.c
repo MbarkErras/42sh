@@ -6,7 +6,7 @@
 /*   By: merras <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/27 21:48:55 by merras            #+#    #+#             */
-/*   Updated: 2019/08/04 01:12:58 by merras           ###   ########.fr       */
+/*   Updated: 2019/08/04 21:39:52 by merras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,7 @@ int				main(void)
 	init_shell_config(&sh);
 	while (1)
 	{
+		//check_jobs_state();
 		read_cline(PRMPT(F_GET(sh.flags, F_LASTRET)), &sh);
 		if (ft_strlen(sh.in))
 			t_string_push(&sh.hist, sh.in);

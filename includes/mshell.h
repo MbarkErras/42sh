@@ -6,7 +6,7 @@
 /*   By: merras <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/27 21:49:12 by merras            #+#    #+#             */
-/*   Updated: 2019/08/04 00:44:29 by merras           ###   ########.fr       */
+/*   Updated: 2019/08/04 09:32:16 by merras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,37 +46,46 @@ typedef struct	s_read
 
 typedef struct	s_redir
 {
-	int                             type;
-	int                             src_fd;
-	int                             dst_fd;
-	char                    *file;
-	struct s_redir  *next;
-}                                       t_redir;
+	int				type;
+	int				src_fd;
+	int				dst_fd;
+	char			*file;
+	struct s_redir	*next;
+}				t_redir;
 
-typedef struct                  s_cmd
+typedef struct	s_cmd
 {
-	char                            **arg;
-	int                                     ret_val;
-	t_redir                         *redir;
-	int                                     flag;
-	char                            *heredoc;
-	struct s_cmd            *next;
-}                                               t_cmd;
+	char			**arg;
+	int				ret_val;
+	t_redir         *redir;
+	int				flag;
+	char			*heredoc;
+	struct s_cmd	*next;
+}				t_cmd;
 
-typedef struct                  s_commands
+typedef struct	s_commands
 {
-	t_cmd                           *chain;
-	int                                     return_val;
-	struct s_commands       *next;
-}                                               t_commands;
+	t_cmd				*chain;
+	int					return_val;
+	struct s_commands	*next;
+}				t_commands;
+
+typedef struct	s_job
+{
+	unsigned int	job_number;
+	int				job_state;
+
+
+
+}				t_job;
 
 typedef struct	s_shell_config
 {
 	t_string		*hist;
 	t_string		*env;
 	t_commands		*commands;
+	t_job			jobs;
 	char			*in;
-	char			*in_parse;
 	char			*cboard;
 	int				flags;
 	struct termios	saved_attr;
@@ -273,10 +282,6 @@ void			b_exit(char **in);
 /*
 ** JOB CONTROL
 */
-
-
-
-
 
 
 #endif
