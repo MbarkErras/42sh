@@ -6,11 +6,18 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/07 19:13:47 by merras            #+#    #+#             */
-/*   Updated: 2019/08/04 01:13:30 by merras           ###   ########.fr       */
+/*   Updated: 2019/08/05 17:27:17 by merras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mshell.h"
+
+void	restore_io(void)
+{
+	dup2(sh_config_getter(NULL)->stdin, 0);
+	dup2(sh_config_getter(NULL)->stdout, 1);
+	dup2(sh_config_getter(NULL)->stderr, 2);
+}
 
 char    *direct_access_check(char *exec)
 {
@@ -114,9 +121,6 @@ int		execute_command(t_cmd cmd)
 int		execute_commands(t_cmd *cmd)
 {
 	int	p[2];
-	int stderr = dup(2);
-	int stdout = dup(1);
-	int stdin = dup(0);
 	int fd_pipe = dup(0);
 	int child_pid;
 	int stat;
@@ -137,7 +141,7 @@ int		execute_commands(t_cmd *cmd)
 			close(p[1]);
 		}
 		else
-			dup2(stdout, 1);
+			dup2(sh_config_getter(NULL)->stdout, 1);
 		if (cmd->heredoc)
 		{
 			ft_putstr(cmd->heredoc);
@@ -160,11 +164,7 @@ int		execute_commands(t_cmd *cmd)
 		free(cmd);
 		cmd = tmp;
 	}
-	dup2(stdout, 1);
-	dup2(stderr, 2);
-	dup2(stdin, 0);
-	close(stdin);
-	close(stdout);
+	restore_io();
 	init_terminal();
 	return (1);
 }

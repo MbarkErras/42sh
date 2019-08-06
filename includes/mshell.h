@@ -6,7 +6,7 @@
 /*   By: merras <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/27 21:49:12 by merras            #+#    #+#             */
-/*   Updated: 2019/08/04 09:32:16 by merras           ###   ########.fr       */
+/*   Updated: 2019/08/05 17:27:19 by merras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,13 @@ typedef struct	s_cmd
 {
 	char			**arg;
 	int				ret_val;
+
+	/*
+	**	job control related declarations
+	*/
+	pid_t			pid;
+	int				jcflags;
+
 	t_redir         *redir;
 	int				flag;
 	char			*heredoc;
@@ -67,16 +74,22 @@ typedef struct	s_commands
 {
 	t_cmd				*chain;
 	int					return_val;
+
+	/*
+	**	if job is meant for background F_BACKGROUND
+	**	should be set in jcflag
+	*/
+	pid_t				gid;
+	int					jcflag;
+
 	struct s_commands	*next;
 }				t_commands;
 
 typedef struct	s_job
 {
+	pid_t			leader;
 	unsigned int	job_number;
 	int				job_state;
-
-
-
 }				t_job;
 
 typedef struct	s_shell_config
@@ -88,6 +101,11 @@ typedef struct	s_shell_config
 	char			*in;
 	char			*cboard;
 	int				flags;
+
+	int				stdin;
+	int				stdout;
+	int				stderr;
+
 	struct termios	saved_attr;
 }				t_shell_config;
 
@@ -232,15 +250,17 @@ char			*delete_chars(char *str, int start, int size);
 # define D_QUOTE -10
 # define DOLLAR_SIGN -109
 
-t_commands              *parse(t_shell_config *sh);
-void                    apply_expansions(char **args);
-int                             apply_glob_expansion(char *gl_pattern, char **args);
-int                             execute_command_line(t_commands *commands);
-int                             apply_redirections(t_redir *redir);
-void                    redirections_cleanup(t_redir *redir);
+# define F_BACKGROUND
 
-char                    *ft_fstrjoin(char *s1, char *s2);
-int                             ft_strpos(char *s1, char *s2);
+t_commands		*parse(t_shell_config *sh);
+void			apply_expansions(char **args);
+int				apply_glob_expansion(char *gl_pattern, char **args);
+int				execute_command_line(t_commands *commands);
+int				apply_redirections(t_redir *redir);
+void			redirections_cleanup(t_redir *redir);
+
+char			*ft_fstrjoin(char *s1, char *s2);
+int				ft_strpos(char *s1, char *s2);
 
 /*
 ** EXPANSIONS
@@ -283,6 +303,8 @@ void			b_exit(char **in);
 ** JOB CONTROL
 */
 
+# define F_CP_STOPPED
+# define F_CP_COMPLETED
 
 #endif
 

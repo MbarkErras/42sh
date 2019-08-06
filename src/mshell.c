@@ -6,7 +6,7 @@
 /*   By: merras <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/27 21:48:55 by merras            #+#    #+#             */
-/*   Updated: 2019/08/04 21:39:52 by merras           ###   ########.fr       */
+/*   Updated: 2019/08/05 17:27:21 by merras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,16 @@ void			signal_handler(int sig)
 			sh->hist, sh->cboard, &(sh->in));
 }
 
+void			save_io(void)
+{
+	sh_config_getter(NULL)->stdin = dup(0);
+	sh_config_getter(NULL)->stdout = dup(1);
+	sh_config_getter(NULL)->stderr = dup(2);
+	dup2(419, sh_config_getter(NULL)->stdin);
+	dup2(420, sh_config_getter(NULL)->stdout);
+	dup2(421, sh_config_getter(NULL)->stderr);
+}
+
 static void		init_shell_config(t_shell_config *sh)
 {
 	extern char	**environ;
@@ -73,6 +83,7 @@ static void		init_shell_config(t_shell_config *sh)
 	signal(SIGINT, signal_handler);
 	sh_config_getter(sh);
 	init_terminal(sh);
+	save_io();
 }
 
 int				main(void)
