@@ -5,8 +5,20 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: merras <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/08/07 09:51:36 by merras            #+#    #+#             */
+/*   Updated: 2019/08/07 10:50:30 by merras           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   mshell.h                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: merras <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/27 21:49:12 by merras            #+#    #+#             */
-/*   Updated: 2019/08/07 04:19:32 by merras           ###   ########.fr       */
+/*   Updated: 2019/08/07 09:51:33 by merras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +75,11 @@ typedef struct	s_process
 	*/
 	pid_t			pid;
 	int				jcflags;
+	int				status;
+	// i/o channels should be initiated to defaults during list creation
+	int				stdin;
+	int				stdout;
+	int				stderr;
 
 	t_redir         	*redir;
 	int					flag;
@@ -77,15 +94,15 @@ typedef struct	s_job
 
 	/*
 	**	if job is meant for background F_BACKGROUND
-	**	should be set in jcflag
+	**	should be set in jcflags
 	*/
-	pid_t				gid;
-	int					jcflag; //should be initialized to 0
+	pid_t				gid; //should be initialized to 0
+	int					jcflags; //should be initialized to 0
+								//F_BACKGROUND should be set if
+								//the job is meant for background
 
 	struct s_job	*next;
 }				t_job;
-
-# define F_GINIT 0
 
 typedef struct	s_shell_config
 {
@@ -207,6 +224,9 @@ char			*delete_chars(char *str, int start, int size);
 # define I_DIR 13
 # define N_ENV 14
 # define F_PIP 15
+# define F_FRK 16
+# define N_CHD 17
+
 
 # define N_XST_T ": no such file or directory: "
 # define N_PRM_T ": permission denied: "
@@ -224,6 +244,8 @@ char			*delete_chars(char *str, int start, int size);
 # define I_DIR_T ": executable is a directory"
 # define N_ENV_T ": correspondant environement variable is not set: "
 # define F_PIP_T ": pipe failed"
+# define F_FRK_T ": fork failed"
+# define N_CHD_T "no child processes"
 
 /*
  ** PARSING
@@ -242,17 +264,11 @@ char			*delete_chars(char *str, int start, int size);
 # define D_QUOTE -10
 # define DOLLAR_SIGN -109
 
-# define F_BACKGROUND
-
 t_job			*parse(t_shell_config *sh);
 void			apply_expansions(char **args);
 int				apply_glob_expansion(char *gl_pattern, char **args);
 int				execute_command_line(t_job *commands);
 ///
-int				execute_jobs(t_job *jobs);
-int				execute_job(t_job *job);
-int				execute_process(t_process *process);
-
 ///
 int				apply_redirections(t_redir *redir);
 void			redirections_cleanup(t_redir *redir);
@@ -305,8 +321,15 @@ void			b_exit(char **in);
 ** JOB CONTROL
 */
 
-# define F_CP_STOPPED
-# define F_CP_COMPLETED
+# define F_BACKGROUND 0
+# define F_INTERACTIVE 0
+# define F_STOP 0
+# define F_COMP 1
+
+int				execute_jobs(t_job *jobs);
+int				execute_job(t_job *job);
+int				execute_process(t_process *process, pid_t gid, int fg);
+
 
 #endif
 

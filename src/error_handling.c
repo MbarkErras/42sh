@@ -6,7 +6,7 @@
 /*   By: merras <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/30 14:40:37 by merras            #+#    #+#             */
-/*   Updated: 2019/08/07 00:31:11 by merras           ###   ########.fr       */
+/*   Updated: 2019/08/07 10:25:53 by merras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,8 @@ char	*ft_strerror(int err)
 		return (err == N_TTY ? N_TTY_T : F_EXE_T);
 	if (err == I_DIR || err == N_ENV)
 		return (err == I_DIR ? I_DIR_T : N_ENV_T);
-	if (err == F_PIP)
-		return (F_PIP_T);
+	if (err == F_PIP || err == F_FRK)
+		return (err == F_PIP ? F_PIP_T : F_FRK_T);
 	return (NULL);
 }
 
