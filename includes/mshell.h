@@ -6,7 +6,7 @@
 /*   By: merras <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/27 21:49:12 by merras            #+#    #+#             */
-/*   Updated: 2019/08/05 17:27:19 by merras           ###   ########.fr       */
+/*   Updated: 2019/08/07 04:19:32 by merras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ typedef struct	s_redir
 	struct s_redir	*next;
 }				t_redir;
 
-typedef struct	s_cmd
+typedef struct	s_process
 {
 	char			**arg;
 	int				ret_val;
@@ -64,15 +64,15 @@ typedef struct	s_cmd
 	pid_t			pid;
 	int				jcflags;
 
-	t_redir         *redir;
-	int				flag;
-	char			*heredoc;
-	struct s_cmd	*next;
-}				t_cmd;
+	t_redir         	*redir;
+	int					flag;
+	char				*heredoc;
+	struct s_process	*next;
+}				t_process;
 
-typedef struct	s_commands
+typedef struct	s_job
 {
-	t_cmd				*chain;
+	t_process			*processes;
 	int					return_val;
 
 	/*
@@ -80,31 +80,21 @@ typedef struct	s_commands
 	**	should be set in jcflag
 	*/
 	pid_t				gid;
-	int					jcflag;
+	int					jcflag; //should be initialized to 0
 
-	struct s_commands	*next;
-}				t_commands;
-
-typedef struct	s_job
-{
-	pid_t			leader;
-	unsigned int	job_number;
-	int				job_state;
+	struct s_job	*next;
 }				t_job;
+
+# define F_GINIT 0
 
 typedef struct	s_shell_config
 {
 	t_string		*hist;
 	t_string		*env;
-	t_commands		*commands;
-	t_job			jobs;
+	t_job			*jobs;
 	char			*in;
 	char			*cboard;
 	int				flags;
-
-	int				stdin;
-	int				stdout;
-	int				stderr;
 
 	struct termios	saved_attr;
 }				t_shell_config;
@@ -216,6 +206,7 @@ char			*delete_chars(char *str, int start, int size);
 # define F_EXE 12
 # define I_DIR 13
 # define N_ENV 14
+# define F_PIP 15
 
 # define N_XST_T ": no such file or directory: "
 # define N_PRM_T ": permission denied: "
@@ -232,6 +223,7 @@ char			*delete_chars(char *str, int start, int size);
 # define F_EXE_T ": execution failed"
 # define I_DIR_T ": executable is a directory"
 # define N_ENV_T ": correspondant environement variable is not set: "
+# define F_PIP_T ": pipe failed"
 
 /*
  ** PARSING
@@ -252,10 +244,16 @@ char			*delete_chars(char *str, int start, int size);
 
 # define F_BACKGROUND
 
-t_commands		*parse(t_shell_config *sh);
+t_job			*parse(t_shell_config *sh);
 void			apply_expansions(char **args);
 int				apply_glob_expansion(char *gl_pattern, char **args);
-int				execute_command_line(t_commands *commands);
+int				execute_command_line(t_job *commands);
+///
+int				execute_jobs(t_job *jobs);
+int				execute_job(t_job *job);
+int				execute_process(t_process *process);
+
+///
 int				apply_redirections(t_redir *redir);
 void			redirections_cleanup(t_redir *redir);
 
@@ -292,6 +290,10 @@ int				b_env_updater(char **in);
 /*
 ** EXECUTION
 */
+
+# define STDIN_DUP 419
+# define STDOUT_DUP 420
+# define STDERR_DUP 421
 
 int				b_echo(char **arg);
 int				b_cd(char ***in);

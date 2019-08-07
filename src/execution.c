@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/07 19:13:47 by merras            #+#    #+#             */
-/*   Updated: 2019/08/05 17:27:17 by merras           ###   ########.fr       */
+/*   Updated: 2019/08/07 04:17:44 by merras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 
 void	restore_io(void)
 {
-	dup2(sh_config_getter(NULL)->stdin, 0);
-	dup2(sh_config_getter(NULL)->stdout, 1);
-	dup2(sh_config_getter(NULL)->stderr, 2);
+	dup2(STDIN_DUP, 0);
+	dup2(STDOUT_DUP, 1);
+	dup2(STDERR_DUP, 2);
 }
 
 char    *direct_access_check(char *exec)
@@ -90,7 +90,7 @@ char    *find_exec(char *exec)
 		return (exec_path);
 	}
 }
-
+/*
 int		execute_command(t_cmd cmd)
 {
 	char	*exec_path;
@@ -117,7 +117,6 @@ int		execute_command(t_cmd cmd)
 	free(cmd.arg);
 	return (child_pid);
 }
-
 int		execute_commands(t_cmd *cmd)
 {
 	int	p[2];
@@ -129,19 +128,15 @@ int		execute_commands(t_cmd *cmd)
 	reset_input_mode();
 	while (cmd)
 	{
-		tmp = cmd->next;
 		dup2(fd_pipe, 0);
 		close(fd_pipe);
 		if (cmd->flag == PIPE || cmd->heredoc)
 		{
-			if (pipe(p) < 0)
-				ft_putendl_fd("Pipe failed.", 2);
 			fd_pipe = p[0];
-			dup2(p[1], 1);
 			close(p[1]);
 		}
 		else
-			dup2(sh_config_getter(NULL)->stdout, 1);
+			dup2(STDIN_DUP, 1);
 		if (cmd->heredoc)
 		{
 			ft_putstr(cmd->heredoc);
@@ -161,14 +156,43 @@ int		execute_commands(t_cmd *cmd)
 			cmd = tmp;
 			continue ;
 		}
-		free(cmd);
-		cmd = tmp;
+		cmd = cmd->next;
 	}
 	restore_io();
 	init_terminal();
 	return (1);
-}
+	int	p[2];
 
+	reset_input_mode();
+	while (cmd)
+	{
+		//dup stdin with pipe read end
+		if (cmd->flag == PIPE || cmd->heredoc)
+		{
+			if (pipe(p) < 0)
+				return (ft_perror(EXEC_NAME, NULL, F_PIP));
+			dup2(p[1], 1);
+		}
+		if (cmd->heredoc)
+		{
+			ft_putstr(cmd->heredoc);
+			ft_strdel(&cmd->heredoc);
+			continue ;
+		}
+
+		
+	}
+
+
+
+	restore_io();
+	init_terminal();
+}
+*/
+/*
+int		execute_commands(t_commands *job)
+{
+}
 int		execute_command_line(t_commands *commands)
 {
 	int		last_ret;
@@ -177,11 +201,109 @@ int		execute_command_line(t_commands *commands)
 	last_ret = 1;
 	while (commands)
 	{
-		tmp = commands->next;
-		commands->return_val = execute_commands(commands->chain);
+		//tmp = commands->next;
+		commands->return_val = execute_commands(commands);
 		last_ret = commands->return_val;
-		free(commands);
-		commands = tmp;
+		commands = commands->next;
+		//free(commands);
+		//commands = tmp;
 	}
 	return (last_ret);
+}*/
+
+
+int		execute_process(t_process *process)
+{
+
+	return (0);
 }
+
+int		execute_job(t_job *job)
+{
+	t_process *process;
+
+	process = job->processes;
+	while (process)
+	{
+		execute_process(process);	
+		process = process->next;
+	}
+	return (0);
+}
+
+int		execute_jobs(t_job *jobs)
+{
+	while (jobs)
+	{
+		if (jobs->next)
+			execute_job(jobs);
+		else
+			return (execute_job(jobs));
+		jobs = jobs->next;
+	}
+	return (0);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

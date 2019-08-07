@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/27 16:25:14 by merras            #+#    #+#             */
-/*   Updated: 2019/08/04 00:02:46 by merras           ###   ########.fr       */
+/*   Updated: 2019/08/07 04:12:09 by merras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,35 +32,35 @@ int		ft_isspace(int c)
 	return (0);
 }
 
-void		print_parsing_res(t_commands *head)
+void		print_parsing_res(t_job *head)
 {
 	int a = 1;
 	
 	while (head)
 	{
-		printf("chain: %d\n", a);
-		while (head->chain)
+		printf("processes: %d\n", a);
+		while (head->processes)
 		{
-			while (*head->chain->arg)
+			while (*head->processes->arg)
 			{
-				printf("\narg: %s\n", *head->chain->arg);
-				while (head->chain->redir)
+				printf("\narg: %s\n", *head->processes->arg);
+				while (head->processes->redir)
 				{
 					printf("Redir:\n type: %d, src_fd: %d, dst_fd: %d, file: %s\n",
-					head->chain->redir->type, head->chain->redir->src_fd, head->chain->redir->dst_fd, head->chain->redir->file);
-					head->chain->redir = head->chain->redir->next;
+					head->processes->redir->type, head->processes->redir->src_fd, head->processes->redir->dst_fd, head->processes->redir->file);
+					head->processes->redir = head->processes->redir->next;
 				}
-				head->chain->arg++;
+				head->processes->arg++;
 			}
-			printf("FLAG: %c\n", head->chain->flag);
-			head->chain = head->chain->next;
+			printf("FLAG: %c\n", head->processes->flag);
+			head->processes = head->processes->next;
 		}
 		a++;
 		head = head->next;
 	}
 }
 
-char	*check_redirections(char *str, t_cmd *cmd, t_shell_config *sh)
+char	*check_redirections(char *str, t_process *cmd, t_shell_config *sh)
 {
 	char	q;
 	char	dq;
@@ -424,14 +424,14 @@ void			apply_globbing(char **line)
 	}
 }
 
-t_cmd			*get_cmds_list(char *cmd_chain, t_shell_config *sh)
+t_process			*get_processs_list(char *cmd_processes, t_shell_config *sh)
 {
 	int			j;
 	int			old_j;
 	char		*str;
-	t_cmd		*h;
-	t_cmd		*c;
-	t_cmd		*t;
+	t_process		*h;
+	t_process		*c;
+	t_process		*t;
 
 	j = 0;
 	h = NULL;
@@ -439,11 +439,11 @@ t_cmd			*get_cmds_list(char *cmd_chain, t_shell_config *sh)
 	t = NULL;
 	old_j = 0;
 	str = NULL;
-	while (cmd_chain[j])
+	while (cmd_processes[j])
 	{
-		if (c && (cmd_chain[j] == PIPE || cmd_chain[j] == AND || cmd_chain[j] == OR))
+		if (c && (cmd_processes[j] == PIPE || cmd_processes[j] == AND || cmd_processes[j] == OR))
 		{
-			c->flag = cmd_chain[j];
+			c->flag = cmd_processes[j];
 			c->next = NULL;
 			old_j += j - old_j;
 			if (c->flag == PIPE)
@@ -465,11 +465,11 @@ t_cmd			*get_cmds_list(char *cmd_chain, t_shell_config *sh)
 		else
 		{
 			old_j += j - old_j;
-			while (cmd_chain[j] && cmd_chain[j] != AND
-			&& cmd_chain[j] != OR && cmd_chain[j] != PIPE)
+			while (cmd_processes[j] && cmd_processes[j] != AND
+			&& cmd_processes[j] != OR && cmd_processes[j] != PIPE)
 				j++;
-			str = ft_strsub(cmd_chain, old_j, j - old_j);
-			c = (t_cmd *)malloc(sizeof(t_cmd));
+			str = ft_strsub(cmd_processes, old_j, j - old_j);
+			c = (t_process *)malloc(sizeof(t_process));
 			c->heredoc = NULL;
 			check_redirections(str, c, sh);
 			// free(str);
@@ -492,13 +492,13 @@ t_cmd			*get_cmds_list(char *cmd_chain, t_shell_config *sh)
 	return (h);
 }
 
-t_commands		*parse(t_shell_config *sh)
+t_job		*parse(t_shell_config *sh)
 {
-	char		**cmd_chain;
+	char		**cmd_processes;
 	char		*line;
-	t_commands	*curr;
-	t_commands	*head;
-	t_commands	*tail;
+	t_job		*curr;
+	t_job		*head;
+	t_job		*tail;
 
 	head = NULL;
 	tail = NULL;
@@ -511,19 +511,19 @@ t_commands		*parse(t_shell_config *sh)
 	line = pre_parse(sh);
 	mark_operators(line);
 	apply_globbing(&line);
-	cmd_chain = ft_strsplit(line, SEMI_COL);
+	cmd_processes = ft_strsplit(line, SEMI_COL);
 /*
 **
-building a list of chained cmds if there's any "&&" or "||" operator.
-i.e separate chains of cmds
+building a list of processesed cmds if there's any "&&" or "||" operator.
+i.e separate processess of cmds
 */
 
-	while (*cmd_chain)
+	while (*cmd_processes)
 	{
-		if (!(curr = (t_commands *)malloc(sizeof(t_commands))))
+		if (!(curr = (t_job *)malloc(sizeof(t_job))))
 			exit(2);
 		curr->next = NULL;
-		curr->chain = get_cmds_list(*cmd_chain, sh);
+		curr->processes = get_processs_list(*cmd_processes, sh);
 		if (!head)
 		{
 			head = curr;
@@ -534,7 +534,7 @@ i.e separate chains of cmds
 			tail->next = curr;
 			tail = curr;
 		}
-		cmd_chain++;
+		cmd_processes++;
 	}
 	return (head);
 }

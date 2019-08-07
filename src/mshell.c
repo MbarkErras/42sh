@@ -6,7 +6,7 @@
 /*   By: merras <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/27 21:48:55 by merras            #+#    #+#             */
-/*   Updated: 2019/08/05 17:27:21 by merras           ###   ########.fr       */
+/*   Updated: 2019/08/07 04:18:55 by merras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,12 +63,9 @@ void			signal_handler(int sig)
 
 void			save_io(void)
 {
-	sh_config_getter(NULL)->stdin = dup(0);
-	sh_config_getter(NULL)->stdout = dup(1);
-	sh_config_getter(NULL)->stderr = dup(2);
-	dup2(419, sh_config_getter(NULL)->stdin);
-	dup2(420, sh_config_getter(NULL)->stdout);
-	dup2(421, sh_config_getter(NULL)->stderr);
+	dup2(0, STDIN_DUP);
+	dup2(1, STDOUT_DUP);
+	dup2(2, STDERR_DUP);
 }
 
 static void		init_shell_config(t_shell_config *sh)
@@ -97,7 +94,8 @@ int				main(void)
 		read_cline(PRMPT(F_GET(sh.flags, F_LASTRET)), &sh);
 		if (ft_strlen(sh.in))
 			t_string_push(&sh.hist, sh.in);
-		sh.commands = parse(&sh);
-		execute_command_line(sh.commands);
+		sh.jobs = parse(&sh);
+		execute_jobs(sh.jobs);
+		//cleanup function when you free jobs list
 	}
 }
