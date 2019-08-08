@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mshell.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: merras <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/07 04:38:45 by merras            #+#    #+#             */
-/*   Updated: 2019/08/07 04:39:09 by merras           ###   ########.fr       */
+/*   Updated: 2019/08/08 23:13:47 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,8 +106,11 @@ int				main(void)
 		read_cline(PRMPT(F_GET(sh.flags, F_LASTRET)), &sh);
 		if (ft_strlen(sh.in))
 			t_string_push(&sh.hist, sh.in);
-		sh.jobs = parse(&sh);
-		execute_jobs(sh.jobs);
+		if (ft_strequ(sh.in, "exit"))
+			exit(0);
+		if (!(sh.jobs = parse(&sh)))
+			continue ;
+		// execute_jobs(sh.jobs);
 		// /!\ execution cleanup function required
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/27 16:25:14 by merras            #+#    #+#             */
-/*   Updated: 2019/08/07 04:12:09 by merras           ###   ########.fr       */
+/*   Updated: 2019/08/08 23:17:11 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,15 +35,15 @@ int		ft_isspace(int c)
 void		print_parsing_res(t_job *head)
 {
 	int a = 1;
-	
+
 	while (head)
 	{
-		printf("processes: %d\n", a);
+		printf("job: %d\n", a);
 		while (head->processes)
 		{
 			while (*head->processes->arg)
 			{
-				printf("\narg: %s\n", *head->processes->arg);
+				printf("\nprocess: %s\n", *head->processes->arg);
 				while (head->processes->redir)
 				{
 					printf("Redir:\n type: %d, src_fd: %d, dst_fd: %d, file: %s\n",
@@ -58,205 +58,6 @@ void		print_parsing_res(t_job *head)
 		a++;
 		head = head->next;
 	}
-}
-
-char	*check_redirections(char *str, t_process *cmd, t_shell_config *sh)
-{
-	char	q;
-	char	dq;
-	int		i;
-	t_redir	*curr;
-	t_redir	*head;
-	t_redir	*tail;
-	int		length;
-	int		old_i;
-	char	*buf;
-/*
-** should do error checking when parsing is done
-*/
-	q = 0;
-	dq = 0;
-	i = 0;
-	old_i = 0;
-	cmd->arg = NULL;
-	head = NULL;
-	curr = NULL;
-	tail = NULL;
-	i = 0;
-	while (str[i])
-	{
-		if (!q && str[i] == '"')
-			dq = !dq;
-		else if (!dq && str[i] == '\'')
-			q = !q;
-		if (!q && !dq)
-		{
-			if ((str[i] == '>' && str[i + 1] != '>') || (str[i] == '<' && str[i + 1] != '<'))
-			{
-				if (!(curr = (t_redir *)malloc(sizeof(t_redir))))
-					exit(2);
-				curr->next = NULL;
-				if (!head)
-				{
-					head = curr;
-					tail = curr;
-				}
-				else
-				{
-					tail->next = curr;
-					tail = curr;
-				}
-				curr->dst_fd = 0;
-				if (str[i] == '>')
-					curr->type = O_CREAT;
-				else
-					curr->type = O_RDONLY;
-				if ((ft_isdigit(str[i - 1]) || str[i - 1] == BLANK || ft_isalpha(str[i - 1])) && str[i + 1] != '&')
-				{
-					if (str[i - 1] == BLANK || ft_isalpha(str[i - 1]))
-					{
-						if (str[i] == '<')
-							curr->src_fd = 0;
-						else
-							curr->src_fd = 1;
-					}
-					else
-					{
-						curr->src_fd = ft_atoi(&str[i - 1]);
-						str[i - 1] = BLANK;
-					}
-				}
-				else if (str[i - 1] == '&')
-				{
-					curr->src_fd = BOTH_FDS;
-					str[i - 1] = BLANK;
-				}
-				else if (str[i + 2] && str[i + 1] == '&')
-				{
-					curr->type = -1;
-					curr->src_fd = ft_atoi(&str[i - 1]);
-					if (ft_isdigit(str[i + 2]))
-						curr->dst_fd = ft_atoi(&str[i + 2]);
-					else if (str[i + 2] == '-')
-						curr->type = CLOSE_FD;
-					str[i] = BLANK;
-					str[i - 1] = BLANK;
-					str[i + 1] = BLANK;
-					str[i + 2] = BLANK;
-					i += 2;
-					continue ;
-				}
-				length = 0;
-				str[i] = BLANK;
-				old_i = i;
-				while (str[i] == BLANK)
-				{
-					old_i++;
-					i++;
-				}
-				while (ft_isalnum(str[i]))
-				{
-					length++;
-					i++;
-				}
-				curr->file = ft_strsub(str, old_i, length);
-				int j = old_i;
-				int k = 0;
-				while (k < length)
-				{
-					str[j] = BLANK;
-					j++;
-					k++;
-				}
-				i--;
-			}
-			else if (str[i] == '>' && str[i + 1] == '>')
-			{
-				if (!(curr = (t_redir *)malloc(sizeof(t_redir))))
-					exit(2);
-				curr->type = O_APPEND;
-				if ((ft_isdigit(str[i - 1]) || str[i - 1] == BLANK || ft_isalpha(str[i - 1])) && str[i + 2] != '&')
-				{
-					if (str[i - 1] == BLANK || ft_isalpha(str[i - 1]))
-						curr->src_fd = 1;
-					else
-					{
-						curr->src_fd = ft_atoi(&str[i - 1]);
-						str[i - 1] = BLANK;
-					}
-				}
-				else if (str[i - 1] == '&')
-					ft_putendl_fd("parse error.", 2);
-				else if (str[i + 2] && str[i + 2] == '&')
-					ft_putendl_fd("parse error.", 2);
-				length = 0;
-				str[i] = BLANK;
-				str[i + 1] = BLANK;
-				old_i = i;
-				while (str[i] == BLANK)
-				{
-					old_i++;
-					i++;
-				}
-				while (ft_isalnum(str[i]))
-				{
-					length++;
-					i++;
-				}
-				curr->file = ft_strsub(str, old_i, length);
-				int j = old_i;
-				int k = 0;
-				while (k < length)
-				{
-					str[j] = BLANK;
-					j++;
-					k++;
-				}
-				curr->next = NULL;
-				if (!head)
-				{
-					head = curr;
-					tail = curr;
-				}
-				else
-				{
-					tail->next = curr;
-					tail = curr;
-				}
-			}
-			else if (str[i] == '<' && str[i + 1] == '<')
-			{
-				str[i] = BLANK;
-				str[i + 1] = BLANK;
-				i += 2;
-				old_i = i;
-				while (str[i] == BLANK)
-				{
-					old_i++;
-					i++;
-				}
-				while (ft_isalnum(str[i]))
-					i++;
-				char *eof = ft_strsub(str, old_i, i - old_i);
-				ft_memset(str + old_i, BLANK, i - old_i);
-				buf = ft_strnew(0);
-				while (1)
-				{
-					read_cline("heredoc> ", sh);
-					if (ft_strequ(sh->in, eof))
-						break ;
-					buf = ft_strjoin(buf, sh->in);
-					buf = ft_strjoin(buf, "\n");
-				}
-				cmd->heredoc = ft_strdup(buf);
-			}
-		}
-		i++;
-	}
-	cmd->redir = head;
-	if (!cmd->arg)
-		cmd->arg = ft_strsplit(str, BLANK);
-	return (str);
 }
 
 char		*pre_parse(t_shell_config *sh)
@@ -352,19 +153,40 @@ void			mark_operators(char *line)
 				line[i] = SEMI_COL;
 			else if (ft_isspace(line[i]))
 				line[i] = BLANK;
-			else if (line[i + 1] && line[i] == '|' && line[i + 1] != '|')
+			else if (line[i] == 92)
+				line[i] = UQ_ESCAPE;
+			else if (line[i] == '|' && line[i + 1] != '|')
 				line[i] = PIPE;
-			else if (line[i + 1] && line[i] == '&' && line[i + 1] == '&')
+			else if (line[i] == '&' && line[i + 1] == '&')
 			{
 				line[i] = AND;
 				line[i + 1] = AND;
 			}
-			else if (line[i + 1] && line[i] == '|' && line[i + 1] == '|')
+			else if (line[i] == '|' && line[i + 1] == '|')
 			{
 				line[i] = OR;
 				line[i + 1] = OR;
 			}
+			else if (line[i + 1] != '>' && line[i + 1] != '<')
+			{
+				if (line[i] == '>')
+					line[i] = OUT_RED_OP;
+				else if (line[i] == '<')
+					line[i] = IN_RED_OP;
+			}
+			else if (line[i] == '>' && line[i + 1] == '>')
+			{
+				line[i] = APP_OUT_RED_OP;
+				line[i + 1] = APP_OUT_RED_OP;
+			}
+			else if (line[i] == '<' && line[i + 1] == '<')
+			{
+				line[i] = HEREDOC_OP;
+				line[i + 1] = HEREDOC_OP;
+			}
 		}
+		else if (line[i] == 92)
+			line[i] = Q_ESCAPE;
 	}
 }
 
@@ -424,7 +246,7 @@ void			apply_globbing(char **line)
 	}
 }
 
-t_process			*get_processs_list(char *cmd_processes, t_shell_config *sh)
+t_process			*get_cmds_list(char *cmd_chain, t_shell_config *sh)
 {
 	int			j;
 	int			old_j;
@@ -439,13 +261,13 @@ t_process			*get_processs_list(char *cmd_processes, t_shell_config *sh)
 	t = NULL;
 	old_j = 0;
 	str = NULL;
-	while (cmd_processes[j])
+	while (cmd_chain[j])
 	{
-		if (c && (cmd_processes[j] == PIPE || cmd_processes[j] == AND || cmd_processes[j] == OR))
+		if (c && (cmd_chain[j] == PIPE || cmd_chain[j] == AND || cmd_chain[j] == OR))
 		{
-			c->flag = cmd_processes[j];
+			c->flag = cmd_chain[j];
 			c->next = NULL;
-			old_j += j - old_j;
+			 old_j += j - old_j;
 			if (c->flag == PIPE)
 				j++;
 			else
@@ -465,10 +287,10 @@ t_process			*get_processs_list(char *cmd_processes, t_shell_config *sh)
 		else
 		{
 			old_j += j - old_j;
-			while (cmd_processes[j] && cmd_processes[j] != AND
-			&& cmd_processes[j] != OR && cmd_processes[j] != PIPE)
+			while (cmd_chain[j] && cmd_chain[j] != AND
+			&& cmd_chain[j] != OR && cmd_chain[j] != PIPE)
 				j++;
-			str = ft_strsub(cmd_processes, old_j, j - old_j);
+			str = ft_strsub(cmd_chain, old_j, j - old_j);
 			c = (t_process *)malloc(sizeof(t_process));
 			c->heredoc = NULL;
 			check_redirections(str, c, sh);
@@ -488,53 +310,144 @@ t_process			*get_processs_list(char *cmd_processes, t_shell_config *sh)
 		t->next = c;
 		t = c;
 	}
-	free(str);
+	// free(str);
 	return (h);
+}
+
+/*
+**	-Check if words are properly quoted.
+**	-Mark the operators '|' '||' '&&' '>' ... + spaces.
+**	-Apply globbing '*' only.
+**	-Error checking.
+**	-Should fix redir syntax errors.
+*/
+
+int				is_not_blank(char *line, int j, int i)
+{
+	char	valid;
+
+	valid = 0;
+	while (j < i)
+	{
+		if (line[j] != BLANK)
+			valid = 1;
+		j++;
+	}
+	return (valid);
+}
+
+int				get_operands(char *line, int *i, char t_op, int *o_i)
+{
+	int		j;
+	char	operands;
+
+	operands = 0;
+	*o_i = *i;
+	if (!(*i) && (IS_REDIR_OP(*i, _AND, _NEQ)))
+		return (operands);
+	j = (*i - 1) >= 0 ? (*i - 1) : *i;
+	if ((j >= 0 && IS_OPERATOR(j, _AND, _NEQ)) || (!j && (IS_REDIR_OP(j, _OR, _EQ))))
+	{
+		while (j && IS_OPERATOR(j, _AND, _NEQ))
+			j--;
+		if (IS_OPERATOR(j, _OR, _EQ))
+			j++;
+		if ((j != *i - 1) && is_not_blank(line, j, *i))
+			operands |= LEFT_OPR;
+		t_op ? (j = *i + 2)
+		: (j = *i + 1);
+		while (line[j] && IS_OPERATOR(j, _AND, _NEQ))
+			j++;
+		if ((j != *i + 1) && is_not_blank(line, *i = t_op ? (*i + 2) : (*i + 1), j))
+		{
+			*i = j - 2;
+			operands |= RIGHT_OPR;
+		}
+	}
+	return (operands);
+}
+/*
+** Needs more testing.
+*/
+int				check_syntax_errors(char *line)
+{
+	int		i;
+	char	t_op;
+	char	ops;
+	int		j;
+
+	i = 0;
+	while (line[i])
+	{
+		t_op = 0;
+		if (IS_OPERATOR(i, _OR, _EQ))
+		{
+			if (TWO_C_OPS(i, _OR, _EQ))
+				t_op = 1;
+			if ((ops = get_operands(line, &i, t_op, &j)) == 1 && (line[j] == SEMI_COL))
+			{
+				i++;
+				continue ;
+			}
+			else if ((IS_REDIR_OP(j, _OR, _EQ)) && (ops & RIGHT_OPR) == RIGHT_OPR)
+			{
+				i++;
+				continue ;
+			}
+			else if ((ops & RIGHT_OPR) != RIGHT_OPR || (ops & LEFT_OPR) != LEFT_OPR)
+			{
+				ft_putendl("syntax error.");
+				return (1);
+			}
+		}
+		i++;
+	}
+	return (0);
 }
 
 t_job		*parse(t_shell_config *sh)
 {
-	char		**cmd_processes;
+	char		**cmd_chain;
 	char		*line;
-	t_job		*curr;
-	t_job		*head;
-	t_job		*tail;
+	t_job	*curr;
+	t_job	*head;
+	t_job	*tail;
 
 	head = NULL;
 	tail = NULL;
-
-/*
-**	Pre parsing:	-Checking if words are properly quoted.
-					-Marking the operators '|' '||' '&&' and spaces.
-					-Apply globbing '*' only.
-*/
 	line = pre_parse(sh);
 	mark_operators(line);
+	// for (int i = 0; i < ft_strlen(line) ; i++)
+	// 	if (line[i] == UQ_ESCAPE)
+	// 		printf("%d\n", line[i]);
+	// 	else if (line[i] == Q_ESCAPE)
+	// 		printf("%d\n", line[i]);
+	if (check_syntax_errors(line))
+		return (NULL);
 	apply_globbing(&line);
-	cmd_processes = ft_strsplit(line, SEMI_COL);
-/*
-**
-building a list of processesed cmds if there's any "&&" or "||" operator.
-i.e separate processess of cmds
-*/
-
-	while (*cmd_processes)
+	cmd_chain = ft_strsplit(line, SEMI_COL);
+	while (*cmd_chain)
 	{
-		if (!(curr = (t_job *)malloc(sizeof(t_job))))
-			exit(2);
-		curr->next = NULL;
-		curr->processes = get_processs_list(*cmd_processes, sh);
-		if (!head)
+		if (is_not_blank(*cmd_chain, 0, ft_strlen(*cmd_chain)))
 		{
-			head = curr;
-			tail = curr;
+			if (!(curr = (t_job *)malloc(sizeof(t_job))))
+				exit(2);
+			curr->next = NULL;
+			curr->processes = get_cmds_list(*cmd_chain, sh);
+			if (!head)
+			{
+				head = curr;
+				tail = curr;
+			}
+			else
+			{
+				tail->next = curr;
+				tail = curr;
+			}
 		}
-		else
-		{
-			tail->next = curr;
-			tail = curr;
-		}
-		cmd_processes++;
+		cmd_chain++;
 	}
+	t_job *tmp = head;
+	print_parsing_res(tmp);
 	return (head);
 }

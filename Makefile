@@ -6,7 +6,7 @@
 #    By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/06/08 14:43:13 by merras            #+#    #+#              #
-#    Updated: 2019/08/04 00:09:40 by merras           ###   ########.fr        #
+#    Updated: 2019/08/08 23:10:56 by yoyassin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,6 +27,8 @@ SRCS=b_cd.c \
 	 move_word.c \
 	 read_input.c \
 	 parse.c \
+	 parse_redir.c \
+	 parse_redir2.c \
 	 cleanup.c \
 	 error_handling.c \
 	 mshell.c \

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mshell.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: merras <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/07 09:51:36 by merras            #+#    #+#             */
-/*   Updated: 2019/08/07 10:50:30 by merras           ###   ########.fr       */
+/*   Updated: 2019/08/08 23:20:47 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -262,9 +262,38 @@ char			*delete_chars(char *str, int start, int size);
 # define HEREDOC -8
 # define QUOTE -9
 # define D_QUOTE -10
+# define OUT_RED_OP -11
+# define IN_RED_OP -12
+# define APP_OUT_RED_OP -13
+# define HEREDOC_OP -14
+# define FD_AGGR -15
+# define UQ_ESCAPE -16
+# define Q_ESCAPE -17
 # define DOLLAR_SIGN -109
+# define IS_REDIRECTION str[i] == OUT_RED_OP || str[i] == IN_RED_OP || str[i] == APP_OUT_RED_OP
+# define _OR ||
+# define _AND &&
+# define _EQ ==
+# define _NEQ !=
+# define TWO_C_OPS(i, _O, C) line[i] C AND _O \
+								line[i] C OR _O \
+								line[i] C APP_OUT_RED_OP _O \
+								line[i] C HEREDOC_OP
+# define ONE_C_OPS(i, _O, C) line[i] C SEMI_COL _O \
+								line[i] C PIPE _O \
+								line[i] C OUT_RED_OP _O \
+								line[i] C IN_RED_OP
+# define IS_OPERATOR(i, _O, C) TWO_C_OPS(i, _O, C) _O ONE_C_OPS(i, _O, C)
+# define IS_REDIR_OP(i, _O, C) line[i] C OUT_RED_OP _O line[i] C IN_RED_OP \
+						_O line[i] C APP_OUT_RED_OP _O line[i] C HEREDOC_OP
+# define LEFT_OPR 0b00000001
+# define RIGHT_OPR 0b00000010
 
 t_job			*parse(t_shell_config *sh);
+char			*check_redirections(char *str, t_process *cmd, t_shell_config *sh);
+int				get_redir_fds(t_redir *curr, char *str, int *i);
+void			get_redir_file(t_redir *curr, char *str, int *i);
+char			*get_heredoc(char *str, int *i, t_shell_config *sh);
 void			apply_expansions(char **args);
 int				apply_glob_expansion(char *gl_pattern, char **args);
 int				execute_command_line(t_job *commands);
