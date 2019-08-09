@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/27 16:25:14 by merras            #+#    #+#             */
-/*   Updated: 2019/08/08 23:17:11 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/08/09 21:38:22 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,12 +44,12 @@ void		print_parsing_res(t_job *head)
 			while (*head->processes->arg)
 			{
 				printf("\nprocess: %s\n", *head->processes->arg);
-				while (head->processes->redir)
-				{
-					printf("Redir:\n type: %d, src_fd: %d, dst_fd: %d, file: %s\n",
-					head->processes->redir->type, head->processes->redir->src_fd, head->processes->redir->dst_fd, head->processes->redir->file);
-					head->processes->redir = head->processes->redir->next;
-				}
+				// while (head->processes->redir)
+				// {
+				// 	printf("Redir:\n type: %d, src_fd: %d, dst_fd: %d, file: %s\n",
+				// 	head->processes->redir->type, head->processes->redir->src_fd, head->processes->redir->dst_fd, head->processes->redir->file);
+				// 	head->processes->redir = head->processes->redir->next;
+				// }
 				head->processes->arg++;
 			}
 			printf("FLAG: %c\n", head->processes->flag);
@@ -291,6 +291,7 @@ t_process			*get_cmds_list(char *cmd_chain, t_shell_config *sh)
 			&& cmd_chain[j] != OR && cmd_chain[j] != PIPE)
 				j++;
 			str = ft_strsub(cmd_chain, old_j, j - old_j);
+			printf("str: %s\n",str);
 			c = (t_process *)malloc(sizeof(t_process));
 			c->heredoc = NULL;
 			check_redirections(str, c, sh);
@@ -356,7 +357,7 @@ int				get_operands(char *line, int *i, char t_op, int *o_i)
 			operands |= LEFT_OPR;
 		t_op ? (j = *i + 2)
 		: (j = *i + 1);
-		while (line[j] && IS_OPERATOR(j, _AND, _NEQ))
+		while ((line[j] && IS_OPERATOR(j, _AND, _NEQ)) || IS_REDIR_OP(j, _OR, _EQ))
 			j++;
 		if ((j != *i + 1) && is_not_blank(line, *i = t_op ? (*i + 2) : (*i + 1), j))
 		{
@@ -416,6 +417,7 @@ t_job		*parse(t_shell_config *sh)
 	head = NULL;
 	tail = NULL;
 	line = pre_parse(sh);
+	sh->in = ft_strdup(line);
 	mark_operators(line);
 	// for (int i = 0; i < ft_strlen(line) ; i++)
 	// 	if (line[i] == UQ_ESCAPE)
@@ -447,7 +449,13 @@ t_job		*parse(t_shell_config *sh)
 		}
 		cmd_chain++;
 	}
-	t_job *tmp = head;
-	print_parsing_res(tmp);
+	while (head->processes->redir)
+	{
+		printf("Redir:\n type: %d, src_fd: %d, dst_fd: %d, file: %s\n",
+		head->processes->redir->type, head->processes->redir->src_fd, head->processes->redir->dst_fd, head->processes->redir->file);
+		head->processes->redir = head->processes->redir->next;
+	}
+	// t_job *tmp = head;
+	// print_parsing_res(tmp);
 	return (head);
 }

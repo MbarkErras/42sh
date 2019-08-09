@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/06 00:55:29 by yoyassin          #+#    #+#             */
-/*   Updated: 2019/08/06 01:00:32 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/08/09 00:05:53 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ char	*get_heredoc_string(char *eof, t_shell_config *sh)
 	}
 	return (buf);
 }
-
+//should add heredoc fd
 char	*get_heredoc(char *str, int *i, t_shell_config *sh)
 {
 	char	*eof;

@@ -6,11 +6,11 @@
 #    By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/06/08 14:43:13 by merras            #+#    #+#              #
-#    Updated: 2019/08/08 23:10:56 by yoyassin         ###   ########.fr        #
+#    Updated: 2019/08/09 01:35:29 by yoyassin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME=minishell
+NAME=21sh
 
 SRCS=b_cd.c \
 	 builtins.c \

@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/07 04:38:45 by merras            #+#    #+#             */
-/*   Updated: 2019/08/08 23:13:47 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/08/09 20:48:04 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,6 +110,7 @@ int				main(void)
 			exit(0);
 		if (!(sh.jobs = parse(&sh)))
 			continue ;
+		t_string_push(&sh.hist, sh.in);
 		// execute_jobs(sh.jobs);
 		// /!\ execution cleanup function required
 	}

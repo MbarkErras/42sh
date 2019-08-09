@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/18 20:48:11 by yoyassin          #+#    #+#             */
-/*   Updated: 2019/07/21 19:22:50 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/08/09 00:45:41 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,11 +117,8 @@ void		remove_quotes(char **args)
 	s_dq = 0;
 	s_q = 0;
 	tmp = ft_strdup(*args);
-	// quotes_delimiter(&tmp, &s_dq, &s_q);
-	// if (s_dq)
-		remove_dq(&tmp);
-	// if (s_q)
-		remove_q(&tmp);
+	remove_dq(&tmp);
+	remove_q(&tmp);
 	free(*args);
 	*args = tmp;
 }
@@ -190,13 +187,13 @@ int	apply_glob_expansion(char *gl_pattern, char **args)
 	if (!g.gl_pathc)
 		return (0);
 	i = 0;
-    while (i < g.gl_pathc)
-    {
-		*args = ft_strjoin(!*args ? ft_strnew(0): *args, g.gl_pathv[i]);
+	while (i < g.gl_pathc)
+	{
+		*args = ft_strjoin(!*args ? ft_strnew(0) : *args, g.gl_pathv[i]);
 		*args = ft_strjoin(*args, " ");
 		i++;
-    }
-    globfree(&g);
+	}
+	globfree(&g);
 	return (1);
 }
 
