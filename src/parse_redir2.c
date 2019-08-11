@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/06 00:55:29 by yoyassin          #+#    #+#             */
-/*   Updated: 2019/08/09 00:05:53 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/08/11 21:32:03 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,12 +94,23 @@ char	*get_heredoc_string(char *eof, t_shell_config *sh)
 	}
 	return (buf);
 }
-//should add heredoc fd
-char	*get_heredoc(char *str, int *i, t_shell_config *sh)
+
+int		get_heredoc_fd(char *str, int i)
+{
+	while (str[i] && ft_isdigit(str[--(i)]))
+		;
+	return (ft_atoi(str + i + 1));
+}
+
+char	*get_heredoc(char *str, int *i, t_shell_config *sh, int *hd_fd)
 {
 	char	*eof;
 	int		old_i;
 
+	old_i = *i;
+	*hd_fd = (str[*i - 1] == BLANK || ft_isalpha(str[*i - 1])) ?
+	0 : get_heredoc_fd(str, *i);
+	*i = old_i;
 	ft_memset(str + *i, BLANK, 2);
 	*i += 2;
 	old_i = *i;

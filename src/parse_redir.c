@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/05 04:19:50 by yoyassin          #+#    #+#             */
-/*   Updated: 2019/08/08 23:19:09 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/08/11 16:38:16 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ char	*check_redirections(char *str, t_process *cmd, t_shell_config *sh)
 				continue ;
 		}
 		else if (str[i] == HEREDOC_OP)
-			cmd->heredoc = get_heredoc(str, &i, sh);
+			cmd->heredoc = get_heredoc(str, &i, sh, &cmd->heredoc_fd);
 	}
 	cmd->redir = head;
 	cmd->arg = ft_strsplit(str, BLANK);

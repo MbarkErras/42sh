@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/07 09:51:36 by merras            #+#    #+#             */
-/*   Updated: 2019/08/10 04:18:39 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/08/11 21:21:00 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,7 @@ typedef struct	s_process
 	t_redir         	*redir;
 	int					flag;
 	char				*heredoc;
+	int					heredoc_fd;
 	struct s_process	*next;
 }				t_process;
 
@@ -293,7 +294,7 @@ t_job			*parse(t_shell_config *sh);
 char			*check_redirections(char *str, t_process *cmd, t_shell_config *sh);
 int				get_redir_fds(t_redir *curr, char *str, int *i);
 void			get_redir_file(t_redir *curr, char *str, int *i);
-char			*get_heredoc(char *str, int *i, t_shell_config *sh);
+char			*get_heredoc(char *str, int *i, t_shell_config *sh, int *hd_fd);
 void			apply_expansions(char **args);
 int				apply_glob_expansion(char *gl_pattern, char **args);
 int				execute_command_line(t_job *commands);

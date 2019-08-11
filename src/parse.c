@@ -6,13 +6,12 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/27 16:25:14 by merras            #+#    #+#             */
-/*   Updated: 2019/08/11 01:28:17 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/08/11 16:34:41 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/mshell.h"
 /*
-** parsing needs rework to get precedence right because of && and ||
 ** add fd to heredoc
 ** add escape char \
 */
@@ -490,7 +489,7 @@ t_job		*parse(t_shell_config *sh)
 	// 	head->processes->redir->type, head->processes->redir->src_fd, head->processes->redir->dst_fd, head->processes->redir->file);
 	// 	head->processes->redir = head->processes->redir->next;
 	// }
-	t_job *tmp = head;
-	print_parsing_res(tmp);
+	// t_job *tmp = head;
+	// print_parsing_res(tmp);
 	return (head);
 }
