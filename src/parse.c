@@ -6,12 +6,16 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/27 16:25:14 by merras            #+#    #+#             */
-/*   Updated: 2019/08/09 21:38:22 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/08/11 01:28:17 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/mshell.h"
-
+/*
+** parsing needs rework to get precedence right because of && and ||
+** add fd to heredoc
+** add escape char \
+*/
 int	ft_strpos(char *s1, char *s2)
 {
 	char *sub;
@@ -44,17 +48,17 @@ void		print_parsing_res(t_job *head)
 			while (*head->processes->arg)
 			{
 				printf("\nprocess: %s\n", *head->processes->arg);
-				// while (head->processes->redir)
-				// {
-				// 	printf("Redir:\n type: %d, src_fd: %d, dst_fd: %d, file: %s\n",
-				// 	head->processes->redir->type, head->processes->redir->src_fd, head->processes->redir->dst_fd, head->processes->redir->file);
-				// 	head->processes->redir = head->processes->redir->next;
-				// }
+				while (head->processes->redir)
+				{
+					printf("Redir:\n type: %d, src_fd: %d, dst_fd: %d, file: %s\n",
+					head->processes->redir->type, head->processes->redir->src_fd, head->processes->redir->dst_fd, head->processes->redir->file);
+					head->processes->redir = head->processes->redir->next;
+				}
 				head->processes->arg++;
 			}
-			printf("FLAG: %c\n", head->processes->flag);
 			head->processes = head->processes->next;
 		}
+		printf("FLAG: %d\n", head->flag);
 		a++;
 		head = head->next;
 	}
@@ -263,15 +267,12 @@ t_process			*get_cmds_list(char *cmd_chain, t_shell_config *sh)
 	str = NULL;
 	while (cmd_chain[j])
 	{
-		if (c && (cmd_chain[j] == PIPE || cmd_chain[j] == AND || cmd_chain[j] == OR))
+		if (c && cmd_chain[j] == PIPE)
 		{
 			c->flag = cmd_chain[j];
 			c->next = NULL;
-			 old_j += j - old_j;
-			if (c->flag == PIPE)
-				j++;
-			else
-				j += 2;
+			old_j += j - old_j;
+			j++;
 			if (!h)
 			{
 				h = c;
@@ -287,11 +288,10 @@ t_process			*get_cmds_list(char *cmd_chain, t_shell_config *sh)
 		else
 		{
 			old_j += j - old_j;
-			while (cmd_chain[j] && cmd_chain[j] != AND
-			&& cmd_chain[j] != OR && cmd_chain[j] != PIPE)
+			while (cmd_chain[j] && cmd_chain[j] != PIPE)
 				j++;
 			str = ft_strsub(cmd_chain, old_j, j - old_j);
-			printf("str: %s\n",str);
+			// printf("str: %s\n",str);
 			c = (t_process *)malloc(sizeof(t_process));
 			c->heredoc = NULL;
 			check_redirections(str, c, sh);
@@ -428,14 +428,49 @@ t_job		*parse(t_shell_config *sh)
 		return (NULL);
 	apply_globbing(&line);
 	cmd_chain = ft_strsplit(line, SEMI_COL);
+	int	j;
+	int	old_j = 0;
+	char *token = NULL;
+	curr = NULL;
 	while (*cmd_chain)
 	{
 		if (is_not_blank(*cmd_chain, 0, ft_strlen(*cmd_chain)))
 		{
-			if (!(curr = (t_job *)malloc(sizeof(t_job))))
-				exit(2);
-			curr->next = NULL;
-			curr->processes = get_cmds_list(*cmd_chain, sh);
+			j = 0;
+			while ((*cmd_chain)[j])
+			{
+				if (curr && ((*cmd_chain)[j] == AND || (*cmd_chain)[j] == OR))
+				{
+					curr->flag = (*cmd_chain)[j];
+					old_j += j - old_j;
+					j += 2;
+					curr->next = NULL;
+					if (!head)
+					{
+						head = curr;
+						tail = curr;
+					}
+					else
+					{
+						tail->next = curr;
+						tail = curr;
+					}
+					free(token);
+				}
+				else
+				{
+					old_j += j - old_j;
+					while ((*cmd_chain)[j] && (*cmd_chain)[j] != AND && (*cmd_chain)[j] != OR)
+						j++;
+					token = ft_strsub(*cmd_chain, old_j, j - old_j);
+					// printf("token: %s\n", token);
+					if (!(curr = (t_job *)malloc(sizeof(t_job))))
+						exit(2);
+					curr->processes = get_cmds_list(token, sh);
+					curr->flag = 0;
+					curr->next = NULL;
+				}
+			}
 			if (!head)
 			{
 				head = curr;
@@ -449,13 +484,13 @@ t_job		*parse(t_shell_config *sh)
 		}
 		cmd_chain++;
 	}
-	while (head->processes->redir)
-	{
-		printf("Redir:\n type: %d, src_fd: %d, dst_fd: %d, file: %s\n",
-		head->processes->redir->type, head->processes->redir->src_fd, head->processes->redir->dst_fd, head->processes->redir->file);
-		head->processes->redir = head->processes->redir->next;
-	}
-	// t_job *tmp = head;
-	// print_parsing_res(tmp);
+	// while (head->processes->redir)
+	// {
+	// 	printf("Redir:\n type: %d, src_fd: %d, dst_fd: %d, file: %s\n",
+	// 	head->processes->redir->type, head->processes->redir->src_fd, head->processes->redir->dst_fd, head->processes->redir->file);
+	// 	head->processes->redir = head->processes->redir->next;
+	// }
+	t_job *tmp = head;
+	print_parsing_res(tmp);
 	return (head);
 }

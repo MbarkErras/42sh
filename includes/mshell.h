@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/07 09:51:36 by merras            #+#    #+#             */
-/*   Updated: 2019/08/08 23:20:47 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/08/10 04:18:39 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ typedef struct	s_job
 {
 	t_process			*processes;
 	int					return_val;
-
+	int					flag;
 	/*
 	**	if job is meant for background F_BACKGROUND
 	**	should be set in jcflags

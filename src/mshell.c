@@ -6,19 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/07 04:38:45 by merras            #+#    #+#             */
-/*   Updated: 2019/08/09 20:48:04 by yoyassin         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   mshell.h                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: merras <marvin@42.fr>                      +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/07/27 21:48:55 by merras            #+#    #+#             */
-/*   Updated: 2019/08/07 04:18:55 by merras           ###   ########.fr       */
+/*   Updated: 2019/08/10 21:10:43 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,13 +92,12 @@ int				main(void)
 	{
 		//check_jobs_state();
 		read_cline(PRMPT(F_GET(sh.flags, F_LASTRET)), &sh);
-		if (ft_strlen(sh.in))
-			t_string_push(&sh.hist, sh.in);
 		if (ft_strequ(sh.in, "exit"))
 			exit(0);
 		if (!(sh.jobs = parse(&sh)))
 			continue ;
-		t_string_push(&sh.hist, sh.in);
+		if (ft_strlen(sh.in))
+			t_string_push(&sh.hist, sh.in);
 		// execute_jobs(sh.jobs);
 		// /!\ execution cleanup function required
 	}
