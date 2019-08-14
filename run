@@ -1,0 +1,1 @@
+make && sleep 1 && clear && ./21sh

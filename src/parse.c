@@ -6,15 +6,12 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/27 16:25:14 by merras            #+#    #+#             */
-/*   Updated: 2019/08/11 16:34:41 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/08/14 13:52:03 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/mshell.h"
-/*
-** add fd to heredoc
-** add escape char \
-*/
+
 int	ft_strpos(char *s1, char *s2)
 {
 	char *sub;
@@ -80,15 +77,28 @@ char		*pre_parse(t_shell_config *sh)
 	endq = NULL;
 	tmp = NULL;
 	line = ft_strdup(sh->in);
+	// printf("line: %s\n", line);
+	int	j =0;
+	int	k = 0;
 	while (line[i])
 	{
-		if (!q && line[i] == '"')
+		if (!q && line[i] == '"' && line[i - 1] != UQ_ESCAPE)
 		{
 			dq = !dq;
-			if ((endq = ft_strchr(line + i + 1, '"')))
+			j = 0;
+			while ((endq = ft_strchr(line + i + 1, '"')))
 			{
-				dq = !dq;
 				i = ft_strlen(line) - ft_strlen(endq);
+				dq = !dq;
+				while (j < i)
+				{
+					if (line[j - 1] != Q_ESCAPE && line[j] == 92)
+						line[j] = Q_ESCAPE;
+					j++;
+				}
+				if (line[i - 1] == Q_ESCAPE)
+					dq = !dq;
+				j = i;
 			}
 			while (dq)
 			{
@@ -97,8 +107,21 @@ char		*pre_parse(t_shell_config *sh)
 				tmp = line;
 				line = ft_strjoin(line, sh->in);
 				free(tmp);
-				if (ft_strchr(sh->in, '"'))
+				j = 0;
+				if ((endq = ft_strchr(sh->in + j, '"')))
 				{
+					i = ft_strlen(sh->in) - ft_strlen(endq);
+					while (j < i)
+					{
+						if (sh->in[j - 1] != Q_ESCAPE && sh->in[j] == 92)
+							sh->in[j] = Q_ESCAPE;
+						j++;
+					}
+					if (sh->in[i] == '"' && sh->in[i - 1] == Q_ESCAPE)
+					{
+						j = i;
+						continue ;
+					}
 					dq = !dq;
 					done = 1;
 					break ;
@@ -128,8 +151,13 @@ char		*pre_parse(t_shell_config *sh)
 				}
 			}
 		}
+		else if (!q && !dq && line[i - 1] != UQ_ESCAPE && line[i] == 92)
+			line[i] = UQ_ESCAPE;
 		if (done)
-			break ;
+		{
+			done = 0;
+			continue ;
+		}
 		i++;
 	}
 	return (line);
@@ -156,7 +184,7 @@ void			mark_operators(char *line)
 				line[i] = SEMI_COL;
 			else if (ft_isspace(line[i]))
 				line[i] = BLANK;
-			else if (line[i] == 92)
+			else if (line[i - 1] != UQ_ESCAPE && line[i] == 92)
 				line[i] = UQ_ESCAPE;
 			else if (line[i] == '|' && line[i + 1] != '|')
 				line[i] = PIPE;
@@ -188,7 +216,7 @@ void			mark_operators(char *line)
 				line[i + 1] = HEREDOC_OP;
 			}
 		}
-		else if (line[i] == 92)
+		else if (dq && line[i - 1] != Q_ESCAPE && line[i] == 92)
 			line[i] = Q_ESCAPE;
 	}
 }
