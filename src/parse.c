@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/27 16:25:14 by merras            #+#    #+#             */
-/*   Updated: 2019/08/14 23:34:17 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/08/16 22:25:42 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,9 +174,9 @@ void			mark_operators(char *line)
 	i = -1;
 	while (line[++i])
 	{
-		if (!q && line[i] == '"')
+		if (!q && line[i] == '"' && line[i - 1] != UQ_ESCAPE && line[i - 1] != Q_ESCAPE)
 			dq = !dq;
-		else if (!dq && line[i] == '\'')
+		else if (!dq && line[i] == '\'') /* should check escape in single quotes afterwards */
 			q = !q;
 		if (!q && !dq)
 		{

@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/18 20:48:11 by yoyassin          #+#    #+#             */
-/*   Updated: 2019/08/16 19:17:31 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/08/16 22:14:47 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -280,7 +280,9 @@ void		apply_expansions(char **args)
 	s2 = NULL;
 	while (*args)
 	{
+		// printf("arg_b: %s\n", *args);
 		quotes_delimiter(args, &s_dq, &s_q);
+		// printf("arg_b: %s\n", *args);
 		k = 0;
 		tmp2 = ft_strnew(0);
 		s1 = NULL;
@@ -343,6 +345,7 @@ void		apply_expansions(char **args)
 					len++;
 				}
 				s1 = ft_strsub(*args, start, len);
+				printf("s1: %s\n", s1);
 				j = 0;
 				while ((tmp = ft_strchr(s1 + j, '$')))
 				{
