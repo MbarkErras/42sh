@@ -6,11 +6,13 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/18 20:48:11 by yoyassin          #+#    #+#             */
-/*   Updated: 2019/08/09 00:45:41 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/08/16 19:17:31 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/mshell.h"
+
+char	*get_esc_char(char *str, char c);
 
 char		*ft_fstrsub(char const *s, unsigned int start, size_t len)
 {
@@ -56,13 +58,13 @@ void		quotes_delimiter(char **tmp, char *s_dq, char *s_q)
 	i = 0;
 	while ((*tmp)[i])
 	{
-		if (!q && (*tmp)[i] == '"')
+		if (!q && (*tmp)[i] == '"' && (*tmp)[i - 1] != Q_ESCAPE && (*tmp)[i - 1] != UQ_ESCAPE)
 		{
 			dq = !dq;
 			(*tmp)[i] = D_QUOTE;
 			*s_dq = 1;
 		}
-		else if (!dq && (*tmp)[i] == '\'')
+		else if (!dq && (*tmp)[i] == '\'' && (*tmp)[i - 1] != Q_ESCAPE && (*tmp)[i - 1] != UQ_ESCAPE)
 		{
 			q = !q;
 			(*tmp)[i] = QUOTE;
@@ -123,15 +125,32 @@ void		remove_quotes(char **args)
 	*args = tmp;
 }
 
+void		remove_escapes(char **str, char escape)
+{
+	char	**tmp;
+
+	tmp = ft_strsplit(*str, escape);
+	free(*str);
+	*str = NULL;
+	while (*tmp)
+	{
+		*str = ft_strjoin((*str) ? (*str) : ft_strnew(0), *tmp);
+		tmp++;
+	}
+}
+
 void		expand_tilde(char **args, int *j)
 {
 	char	*curr;
 	char	*s1;
 	char	*s2;
 	char	*tmp;
+	char	tilde[2];
 
-	s1 = ft_strsub(*args, 0, ft_strpos(*args, "~"));
-	s2 = ft_strsub(*args, ft_strpos(*args, "~") + 1,
+	tilde[0] = TILDE;
+	tilde[1] = 0;
+	s1 = ft_strsub(*args, 0, ft_strpos(*args, tilde));
+	s2 = ft_strsub(*args, ft_strpos(*args, tilde) + 1,
 	ft_strlen(*args) - ft_strlen(s1) - 1);
 	if ((curr = getenv("HOME")))
 	{
@@ -152,8 +171,11 @@ void		expand_dollar(char *dollar, char **args, int *j)
 	char	*tmp2;
 	int		pos;
 	char	*curr;
+	char	ds[2]; 
 
-	pos = ft_strpos(*args, "$");
+	ds[0] = DOLLAR;
+	ds[1] = 0;
+	pos = ft_strpos(*args, ds);
 	s1 = ft_strsub(*args, 0, pos);
 	s2 = ft_strsub(*args, pos + ft_strlen(dollar) + 1,
 	ft_strlen(*args) - (ft_strlen(dollar) + ft_strlen(s1)) - 1);
@@ -167,6 +189,32 @@ void		expand_dollar(char *dollar, char **args, int *j)
 	tmp2 = *args;
 	*args = ft_fstrjoin(s1, s2);
 	free(tmp2);
+}
+
+void	quoted_escape(char **arg)
+{
+	char	*s1;
+	char	*s2;
+	char	*s3;
+	char	*esc;
+	int		pos;
+	int		j;
+
+	j = 0;
+	s1 = ft_strnew(0);
+	s2 = ft_strnew(0);
+	while ((esc = ft_strchr((*arg) + j, Q_ESCAPE)))
+	{
+		pos = ft_strlen(*arg) - ft_strlen(esc);
+		s1 = ft_strsub(*arg, j, pos - j);
+		s1 = get_esc_char(s1, (*arg)[pos + 1]);
+		s2 = ft_strjoin(s2, s1);
+		j = pos + 2;
+	}
+	s3 = ft_strdup((*arg) + j);
+	s1 = ft_fstrjoin(s2, s3);
+	free(*arg);
+	*arg = s1;
 }
 
 int		errfunc(const char *epath, int errno)
@@ -253,16 +301,35 @@ void		apply_expansions(char **args)
 				j = 0;
 				while ((tmp = ft_strchr(s1 + j, '$')))
 				{
+					int k;
+					k = ft_strlen(s1) - ft_strlen(tmp);
 					i = 1;
 					while (ft_isalnum(tmp[i]))
 						i++;
 					dollar = ft_strsub(tmp, 1, i - 1);
-					expand_dollar(dollar, &s1, &j);
+					if (s1[k - 1] != UQ_ESCAPE)
+					{
+						s1[k] = DOLLAR;
+						expand_dollar(dollar, &s1, &j);
+					}
+					else
+						j = k + i - 1;
 					free(dollar);
 				}
 				j = 0;
 				while ((tmp = ft_strchr(s1 + j, '~')))
-					expand_tilde(&s1, &j);
+				{
+					int	k;
+					k = ft_strlen(s1) - ft_strlen(tmp);
+					if (s1[k - 1] != UQ_ESCAPE)
+					{
+						s1[k] = TILDE;
+						expand_tilde(&s1, &j);
+					}
+					else
+						j++;
+				}
+				remove_escapes(&s1, UQ_ESCAPE);
 				tmp2 = ft_strjoin(tmp2, s1);
 				s1 = NULL;
 			}
@@ -279,13 +346,23 @@ void		apply_expansions(char **args)
 				j = 0;
 				while ((tmp = ft_strchr(s1 + j, '$')))
 				{
+					int k;
+					k = ft_strlen(s1) - ft_strlen(tmp);
 					i = 1;
 					while (ft_isalnum(tmp[i]))
 						i++;
 					dollar = ft_strsub(tmp, 1, i - 1);
-					expand_dollar(dollar, &s1, &j);
+					if (s1[k - 1] != Q_ESCAPE)
+					{
+						s1[k] = DOLLAR;
+						expand_dollar(dollar, &s1, &j);
+					}
+					else
+						j = k + i - 1;
 					free(dollar);
 				}
+				quoted_escape(&s1);
+				remove_escapes(&s1, Q_ESCAPE);
 				tmp2 = ft_strjoin(tmp2, s1);
 				s1 = NULL;
 			}
@@ -307,6 +384,7 @@ void		apply_expansions(char **args)
 		}
 		*args = tmp2;
 		remove_quotes(args);
+		printf("arg: %s\n", *args);
 		args++;
 	}
 }

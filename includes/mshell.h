@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/07 09:51:36 by merras            #+#    #+#             */
-/*   Updated: 2019/08/14 13:37:47 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/08/14 23:46:23 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -270,7 +270,8 @@ char			*delete_chars(char *str, int start, int size);
 # define FD_AGGR -15
 # define UQ_ESCAPE -16
 # define Q_ESCAPE -17
-# define DOLLAR_SIGN -109
+# define DOLLAR -18
+# define TILDE -19
 # define IS_REDIRECTION str[i] == OUT_RED_OP || str[i] == IN_RED_OP || str[i] == APP_OUT_RED_OP
 # define _OR ||
 # define _AND &&
@@ -292,6 +293,7 @@ char			*delete_chars(char *str, int start, int size);
 
 t_job			*parse(t_shell_config *sh);
 char			*check_redirections(char *str, t_process *cmd, t_shell_config *sh);
+char			escape_char(char c);
 int				get_redir_fds(t_redir *curr, char *str, int *i);
 void			get_redir_file(t_redir *curr, char *str, int *i);
 char			*get_heredoc(char *str, int *i, t_shell_config *sh, int *hd_fd);
