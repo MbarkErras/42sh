@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/27 16:25:14 by merras            #+#    #+#             */
-/*   Updated: 2019/08/16 22:25:42 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/08/17 22:17:20 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int		ft_isspace(int c)
 		return (1);
 	return (0);
 }
-
+/* echo "a\""'b"'*/
 void		print_parsing_res(t_job *head)
 {
 	int a = 1;
@@ -85,20 +85,20 @@ char		*pre_parse(t_shell_config *sh)
 		if (!q && line[i] == '"' && line[i - 1] != UQ_ESCAPE)
 		{
 			dq = !dq;
-			j = 0;
 			while ((endq = ft_strchr(line + i + 1, '"')))
 			{
 				i = ft_strlen(line) - ft_strlen(endq);
-				dq = !dq;
 				while (j < i)
 				{
 					if (line[j - 1] != Q_ESCAPE && line[j] == 92)
 						line[j] = Q_ESCAPE;
 					j++;
 				}
-				if (line[i - 1] == Q_ESCAPE)
+				if (line[i - 1] != Q_ESCAPE)
+				{
 					dq = !dq;
-				j = i;
+					break ;
+				}
 			}
 			while (dq)
 			{
@@ -107,28 +107,26 @@ char		*pre_parse(t_shell_config *sh)
 				tmp = line;
 				line = ft_strjoin(line, sh->in);
 				free(tmp);
-				j = 0;
-				if ((endq = ft_strchr(sh->in + j, '"')))
+				while ((endq = ft_strchr(line + i + 1, '"')))
 				{
-					i = ft_strlen(sh->in) - ft_strlen(endq);
+					i = ft_strlen(line) - ft_strlen(endq);
 					while (j < i)
 					{
-						if (sh->in[j - 1] != Q_ESCAPE && sh->in[j] == 92)
-							sh->in[j] = Q_ESCAPE;
+						if (line[j - 1] != Q_ESCAPE && line[j] == 92)
+							line[j] = Q_ESCAPE;
 						j++;
 					}
-					if (sh->in[i] == '"' && sh->in[i - 1] == Q_ESCAPE)
+					if (line[i - 1] != Q_ESCAPE)
 					{
-						j = i;
-						continue ;
+						dq = !dq;
+						done = 1;
+						i++;
+						break ;
 					}
-					dq = !dq;
-					done = 1;
-					break ;
 				}
 			}
 		}
-		else if (!dq && line[i] == '\'')
+		else if (!dq && line[i] == '\'' && line[i - 1] != UQ_ESCAPE)
 		{
 			q = !q;
 			if ((endq = ft_strchr(line + i + 1, '\'')))
@@ -243,7 +241,7 @@ void			apply_globbing(char **line)
 	i = -1;
 	while ((*line)[++i])
 	{
-		if (!q && (*line)[i] == '"')
+		if (!q && (*line)[i] == '"') /*should add escape */
 			dq = !dq;
 		else if (!dq && (*line)[i] == '\'')
 			q = !q;
@@ -454,6 +452,7 @@ t_job		*parse(t_shell_config *sh)
 	if (check_syntax_errors(line))
 		return (NULL);
 	apply_globbing(&line);
+	printf("line: %s\n", line);
 	cmd_chain = ft_strsplit(line, SEMI_COL);
 	int	j;
 	int	old_j = 0;
