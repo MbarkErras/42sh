@@ -16,8 +16,9 @@ $(OBJS): %.o : %.c
 
 
 clean:
-	rm -f  $(NAME)
+	rm -f  $(OBJS)
 
 fclean: clean
+	rm -f  $(NAME)
 
 re: fclean all

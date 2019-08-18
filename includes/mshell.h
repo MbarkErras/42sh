@@ -6,7 +6,7 @@
 /*   By: merras <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/27 21:49:12 by merras            #+#    #+#             */
-/*   Updated: 2019/08/07 09:51:33 by merras           ###   ########.fr       */
+/*   Updated: 2019/08/18 10:37:47 by merras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -222,7 +222,7 @@ char			*delete_chars(char *str, int start, int size);
 # define N_TRM 8
 # define A_TRM 9
 # define S_TRM 10
-//# define N_TTY 11
+# define N_TTY 11
 # define F_EXE 12
 # define I_DIR 13
 # define N_ENV 14
