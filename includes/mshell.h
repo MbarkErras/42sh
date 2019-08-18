@@ -3,22 +3,6 @@
 /*                                                        :::      ::::::::   */
 /*   mshell.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/08/07 09:51:36 by merras            #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2019/08/17 17:56:13 by merras           ###   ########.fr       */
-=======
-/*   Updated: 2019/08/16 19:22:24 by yoyassin         ###   ########.fr       */
->>>>>>> e6b29cb528fce1f6ca5374916ff1c231b823068f
-/*                                                                            */
-/* ************************************************************************** */
-
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   mshell.h                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
 /*   By: merras <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/27 21:49:12 by merras            #+#    #+#             */
@@ -35,6 +19,7 @@
 # include <signal.h>
 # include <sys/ioctl.h>
 # include <sys/stat.h>
+# include <sys/wait.h>
 # include <pwd.h>
 # include <time.h>
 # include <dirent.h>
@@ -237,7 +222,7 @@ char			*delete_chars(char *str, int start, int size);
 # define N_TRM 8
 # define A_TRM 9
 # define S_TRM 10
-# define N_TTY 11
+//# define N_TTY 11
 # define F_EXE 12
 # define I_DIR 13
 # define N_ENV 14

@@ -4,13 +4,6 @@
 /*   mshell.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/08/07 04:38:45 by merras            #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2019/08/17 17:56:22 by merras           ###   ########.fr       */
-=======
-/*   Updated: 2019/08/14 21:20:16 by yoyassin         ###   ########.fr       */
->>>>>>> e6b29cb528fce1f6ca5374916ff1c231b823068f
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,21 +89,11 @@ int				main(void)
 	{
 		//check_jobs_state();
 		read_cline(PRMPT(F_GET(sh.flags, F_LASTRET)), &sh);
-		if (ft_strlen(*rd_config_getter(NULL)->in)) //review
+		if (ft_strlen(*rd_config_getter(NULL)->in))
 		{
-			list_push_back(&sh.hist, list_create_node(t_hist_construct((t_hist){*rd_config_getter(NULL)->in, time(NULL), NULL, 0}), sizeof(t_hist)));
+			list_push_back(&sh.hist, list_create_node(t_hist_construct((t_hist){ft_strdup(*rd_config_getter(NULL)->in), time(NULL), NULL, 0}), sizeof(t_hist)));
 			read_history_resetting();
 		}
-		/*
-		printf("***********\n");
-		t_list *h = sh.hist;
-		while (h)
-		{
-			printf(">> %s\n", ((t_hist *)h->content)->value);
-			h = h->next;
-		}
-		printf("***********\n");
-		*/
 		/*
 		if (ft_strequ(sh.in, "exit"))
 			exit(0);

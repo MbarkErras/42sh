@@ -35,7 +35,6 @@ void	read_history_resetting(void)
 {
 	if (!rd_config_getter(NULL)->editing_history_node)
 		return ;
-	return ;
 	((t_hist *)(rd_config_getter(NULL)->editing_history_node->content))->value = ((t_hist *)(rd_config_getter(NULL)->editing_history_node->content))->fever;
 	((t_hist *)(rd_config_getter(NULL)->editing_history_node->content))->changed = 0;
 }
