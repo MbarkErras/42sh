@@ -6,7 +6,11 @@
 #    By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/06/08 14:43:13 by merras            #+#    #+#              #
+<<<<<<< HEAD
 #    Updated: 2019/08/17 17:54:33 by merras           ###   ########.fr        #
+=======
+#    Updated: 2019/08/14 16:06:34 by yoyassin         ###   ########.fr        #
+>>>>>>> e6b29cb528fce1f6ca5374916ff1c231b823068f
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,6 +30,14 @@ SRCS=b_cd.c \
 	 move_line.c \
 	 move_word.c \
 	 read_input.c \
+<<<<<<< HEAD
+=======
+	 parse.c \
+	 parse_redir.c \
+	 parse_redir2.c \
+	 parse_heredoc.c \
+	 escape_god.c \
+>>>>>>> e6b29cb528fce1f6ca5374916ff1c231b823068f
 	 cleanup.c \
 	 error_handling.c \
 	 mshell.c \
