@@ -58,3 +58,13 @@ void	list_push_front(t_list **head, t_list *node)
 {
 	list_push(head, node, 0);
 }
+
+size_t	list_size(t_list *head)
+{
+	size_t	size;
+
+	size = 0;
+	while (head && ++size)
+		head = head->next;
+	return (size);
+}

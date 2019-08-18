@@ -6,7 +6,7 @@
 /*   By: merras <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/16 10:40:44 by merras            #+#    #+#             */
-/*   Updated: 2019/08/17 17:56:20 by merras           ###   ########.fr       */
+/*   Updated: 2019/08/18 12:51:44 by merras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,4 +37,25 @@ void	read_history_resetting(void)
 		return ;
 	((t_hist *)(rd_config_getter(NULL)->editing_history_node->content))->value = ((t_hist *)(rd_config_getter(NULL)->editing_history_node->content))->fever;
 	((t_hist *)(rd_config_getter(NULL)->editing_history_node->content))->changed = 0;
+}
+
+int		print_history()
+{
+	t_list		*history;
+	t_3tuple	sizes;
+
+	history = sh_config_getter(NULL)->hist;
+	sizes.i = 0;
+	sizes.j = ft_digitscount((long long int)list_size(history));
+	while (history && ++sizes.i)
+	{
+		sizes.k = sizes.j - ft_digitscount(sizes.i) + 2;
+		while (sizes.k--)
+			ft_putchar(' ');
+		ft_putnbr(sizes.i);
+		ft_putstr(((t_hist *)history->content)->changed ? "* " : "  ");
+		ft_putendl(((t_hist *)history->content)->value);
+		history = history->next;	
+	}
+	return (1);
 }

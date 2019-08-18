@@ -6,7 +6,7 @@
 /*   By: merras <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/27 21:49:12 by merras            #+#    #+#             */
-/*   Updated: 2019/08/18 10:37:47 by merras           ###   ########.fr       */
+/*   Updated: 2019/08/18 12:51:52 by merras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -371,5 +371,7 @@ int				execute_process(t_process *process, pid_t gid, int fg);
 t_hist	*t_hist_construct(t_hist entry);
 void	ack_history_change(t_list *node);
 void	read_history_resetting();
+int		b_history(char **in);
+int		print_history();
 
 #endif
