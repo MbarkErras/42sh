@@ -6,7 +6,7 @@
 /*   By: merras <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/08 17:43:39 by merras            #+#    #+#             */
-/*   Updated: 2019/08/03 16:06:10 by merras           ###   ########.fr       */
+/*   Updated: 2019/08/17 11:24:58 by merras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,12 +75,7 @@ void			ft_putchar_fd(char c, int fd);
 void			ft_putstr_fd(char const *s, int fd);
 void			ft_putnbr_fd(int n, int fd);
 void			ft_putendl_fd(char const *s, int fd);
-typedef struct	s_list
-{
-	void			*content;
-	size_t			content_size;
-	struct s_list	*next;
-}				t_list;
+
 typedef struct	s_3tuple
 {
 	int i;
@@ -88,12 +83,6 @@ typedef struct	s_3tuple
 	int k;
 }				t_3tuple;
 
-t_list			*ft_lstnew(void const *content, size_t content_size);
-void			ft_lstdelone(t_list **alst, void (*del)(void *, size_t));
-void			ft_lstdel(t_list **alst, void (*del)(void *, size_t));
-void			ft_lstadd(t_list **alst, t_list *new);
-void			ft_lstiter(t_list *lst, void (*f)(t_list *elem));
-t_list			*ft_lstmap(t_list *lst, t_list *(*f)(t_list *elem));
 typedef struct	s_string
 {
 	char			*string;

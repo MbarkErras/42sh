@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/07 09:51:36 by merras            #+#    #+#             */
-/*   Updated: 2019/08/14 13:37:47 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/08/17 17:56:13 by merras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,15 +25,17 @@
 #ifndef MSHELL_H
 # define MSHELL_H
 
-# include <term.h>
+#  include <term.h>
 # include <unistd.h>
 # include <stdlib.h>
 # include <signal.h>
 # include <sys/ioctl.h>
 # include <sys/stat.h>
 # include <pwd.h>
+# include <time.h>
 # include <dirent.h>
 # include "libft.h"
+# include "simplist.h"
 # include <glob.h> // should be removed
 # include <stdio.h> // should be removed
 # define EXEC_NAME "minishell"
@@ -41,7 +43,7 @@
 
 typedef struct	s_read
 {
-	t_string		*hist;
+	t_list			*hist;
 	char			**in;
 	char			*current;
 	char			*cboard;
@@ -54,6 +56,7 @@ typedef struct	s_read
 	char			b[2];
 	int				cb_start;
 	int				cb_end;
+	t_list			*editing_history_node; //if !NULL then a history entry is being edited
 }				t_read;
 
 typedef struct	s_redir
@@ -105,9 +108,18 @@ typedef struct	s_job
 	struct s_job	*next;
 }				t_job;
 
+typedef struct	s_hist
+{
+	char			*value;
+	time_t			date;
+	char			*fever;
+	int				changed;
+}				t_hist;
+
 typedef struct	s_shell_config
 {
-	t_string		*hist;
+	t_read			rd;
+	t_list			*hist;
 	t_string		*env;
 	t_job			*jobs;
 	char			*in;
@@ -181,7 +193,7 @@ int				ft_perror(char *command, char *arg, int err);
 # define TERMINAL_DELETE(x) (x == CTRLD || x == DEL)
 
 void			read_cline(char *prompt, t_shell_config *sh);
-t_read			init_read(char *prompt, t_string *hist, char *cboard,
+t_read			init_read(char *prompt, t_list *hist, char *cboard,
 		char **in);
 t_read			*rd_config_getter(t_read *rd_set);
 void			clipboard_copy_cut(t_read *rd);
@@ -201,6 +213,7 @@ void			move_right(t_read *rd);
 void			end_home(t_read *rd);
 void			move_left_wrap(t_read *rd);
 void			get_left(t_read *rd);
+void			get_right(t_read *rd);
 void			free_and_init(char **ptr);
 
 char			*delete_chars(char *str, int start, int size);
@@ -360,5 +373,12 @@ int				execute_jobs(t_job *jobs);
 int				execute_job(t_job *job);
 int				execute_process(t_process *process, pid_t gid, int fg);
 
+/*
+** HISTORY
+*/
+
+t_hist	*t_hist_construct(t_hist entry);
+void	ack_history_change(t_list *node);
+void	read_history_resetting();
 
 #endif

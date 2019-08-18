@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/07 04:38:45 by merras            #+#    #+#             */
-/*   Updated: 2019/08/10 21:10:43 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/08/17 17:56:22 by merras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,8 +57,8 @@ void			signal_handler(int sig)
 	if (F_GET(sh->flags, F_CHILDPROC))
 		return ;
 	rd = rd_config_getter(NULL);
-	*rd = init_read(PRMPT(F_GET(sh->flags, F_LASTRET)),
-			sh->hist, sh->cboard, &(sh->in));
+	sh->rd = init_read(PRMPT(F_GET(sh->flags, F_LASTRET)),
+	sh->hist, sh->cboard, &(sh->in));
 }
 
 void			save_io(void)
@@ -79,7 +79,7 @@ static void		init_shell_config(t_shell_config *sh)
 	sh->flags = 1;
 	signal(SIGINT, signal_handler);
 	sh_config_getter(sh);
-	init_terminal(sh);
+	init_terminal();
 	save_io();
 }
 
@@ -92,12 +92,27 @@ int				main(void)
 	{
 		//check_jobs_state();
 		read_cline(PRMPT(F_GET(sh.flags, F_LASTRET)), &sh);
+		if (ft_strlen(*rd_config_getter(NULL)->in)) //review
+		{
+			list_push_back(&sh.hist, list_create_node(t_hist_construct((t_hist){*rd_config_getter(NULL)->in, time(NULL), NULL, 0}), sizeof(t_hist)));
+			read_history_resetting();
+		}
+		/*
+		printf("***********\n");
+		t_list *h = sh.hist;
+		while (h)
+		{
+			printf(">> %s\n", ((t_hist *)h->content)->value);
+			h = h->next;
+		}
+		printf("***********\n");
+		*/
+		/*
 		if (ft_strequ(sh.in, "exit"))
 			exit(0);
 		if (!(sh.jobs = parse(&sh)))
 			continue ;
-		if (ft_strlen(sh.in))
-			t_string_push(&sh.hist, sh.in);
+			*/
 		// execute_jobs(sh.jobs);
 		// /!\ execution cleanup function required
 	}

@@ -6,7 +6,7 @@
 /*   By: merras <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/07 15:15:20 by merras            #+#    #+#             */
-/*   Updated: 2018/10/10 06:48:24 by merras           ###   ########.fr       */
+/*   Updated: 2019/08/17 15:57:15 by merras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@ int	ft_strequ(char const *s1, char const *s2)
 	size_t len1;
 	size_t len2;
 
+	if (!s1 || !s2)
+		return (-1);
 	len1 = ft_strlen(s1);
 	len2 = ft_strlen(s2);
 	i = 0;

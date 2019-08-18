@@ -6,7 +6,7 @@
 /*   By: merras <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/05 21:00:04 by merras            #+#    #+#             */
-/*   Updated: 2019/08/03 16:46:14 by merras           ###   ########.fr       */
+/*   Updated: 2019/08/17 17:56:19 by merras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,7 @@ void	move_left(t_read *rd)
 	rd->pos--;
 }
 
+/*
 void	navigate_hist(t_read *rd)
 {
 	if (F_GET(rd->flags, F_HIST) && (rd->b[0] == 'A' ? rd->hist : rd->hist))
@@ -104,11 +105,43 @@ void	navigate_hist(t_read *rd)
 	}
 	F_SET(rd->flags, F_HIST);
 }
+*/
+
+void	navigate_hist(t_read *rd)
+{
+	if (F_GET(rd->flags, F_HIST) && rd->hist)
+	{
+		if (rd->b[0] == 'A' && !rd->hist->prev)
+			return ;
+		rd->hist = rd->b[0] == 'A' ? rd->hist->prev : rd->hist->next;
+	}
+	if (rd->hist)
+	{
+		get_left(rd);
+		tputs(tgetstr("cd", NULL), 1, ft_putchar_int);
+		rd->in = &((t_hist *)(rd->hist->content))->value;	
+		rd->editing_history_node = rd->hist;
+		terminal_insert(rd, "");
+		get_right(rd);
+	}
+	F_SET(rd->flags, F_HIST);
+}
 
 void	move_character(t_read *rd)
 {
 	if ((rd->b[0] == 'A' || rd->b[0] == 'B') && rd->hist)
 	{
+		if (rd->b[0] == 'B' && !rd->hist->next)
+		{
+				get_left(rd);
+				tputs(tgetstr("cd", NULL), 1, ft_putchar_int);
+				rd->in = &sh_config_getter(NULL)->in;	
+				rd->editing_history_node = NULL;
+				terminal_insert(rd, "");
+				get_right(rd);
+				F_UNSET(rd->flags, F_HIST);
+				return ;
+		}
 		navigate_hist(rd);
 	}
 	if (rd->b[0] == 'C' && rd->pos < rd->prmpt + (int)ft_strlen(*(rd->in)))

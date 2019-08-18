@@ -6,7 +6,7 @@
 /*   By: merras <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/05 21:31:00 by merras            #+#    #+#             */
-/*   Updated: 2019/08/02 18:46:12 by merras           ###   ########.fr       */
+/*   Updated: 2019/08/17 13:22:01 by merras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,12 @@ void	get_left(t_read *rd)
 {
 	while (rd->pos > rd->prmpt)
 		move_left(rd);
+}
+
+void	get_right(t_read *rd)
+{
+	while (rd->pos < (int)(rd->prmpt + ft_strlen(*rd->in)))
+		move_right(rd);
 }
 
 void	free_and_init(char **ptr)
