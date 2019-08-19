@@ -102,7 +102,7 @@ typedef struct	s_hist
 	char			*value;
 	time_t			date;
 	char			*fever;
-	int				changed;
+	int			flags;
 }				t_hist;
 
 typedef struct	s_shell_config
@@ -222,7 +222,7 @@ char			*delete_chars(char *str, int start, int size);
 # define N_TRM 8
 # define A_TRM 9
 # define S_TRM 10
-# define N_TTY 11
+//# define N_TTY 11
 # define F_EXE 12
 # define I_DIR 13
 # define N_ENV 14
@@ -367,6 +367,9 @@ int				execute_process(t_process *process, pid_t gid, int fg);
 /*
 ** HISTORY
 */
+
+# define F_CHANGED 0
+# define F_NEW 1
 
 t_hist	*t_hist_construct(t_hist entry);
 void	ack_history_change(t_list *node);
