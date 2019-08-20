@@ -18,13 +18,11 @@ int	history_dispatcher(char c, char **in)
 		list_delete(sh_config_getter(NULL)->hist, hist_node_del);
 	else if (c == 'd')
 		return (history_delete(in));
-	else if (c == 'a')
-		return ();
+	else if (c == 'a' || c == 'w')
+		return (history_write(in, c));
 	else if (c == 'n')
 		return ();
 	else if (c == 'r')
-		return ();
-	else if (c == 'w')
 		return ();
 	else if (c == 'p')
 		return ();
@@ -62,5 +60,5 @@ int	b_history(char **in)
 			return (ft_perror(EXEC_NAME, in[i], N_PRM));
 		setter(flagset, in[i] + 1);
 	}
-	return (history_turing_iterator(flagset, in));
+	return (history_turing_iterator(flagset, in + i));
 }

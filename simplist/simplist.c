@@ -132,7 +132,7 @@ size_t	list_node_index(t_list *head, *node)
 	return (index + 1);
 }
 
-t_list	list_indexed_node(t_list *head, size_t index)
+t_list	*list_indexed_node(t_list *head, size_t index)
 {
 	size_t i;
 
@@ -145,4 +145,33 @@ t_list	list_indexed_node(t_list *head, size_t index)
 		head->next;
 	}
 	return (0);
+}
+
+t_list	**list_pointer_address(t_list **head, t_list *node)
+{
+	t_list *i;
+
+	if (!head || !node || !*head)
+		return (NULL);
+	if (*head == node)
+		return (head);
+	i = head;
+	while (i)
+	{
+		if (i == node)
+			return (&i->prev->next);
+		i = i->next;
+	}
+	return (NULL);
+}
+
+t_list	*list_find_node(t_list *head, int(*filter)(void *))
+{
+	while (head)
+	{
+		if (filter(head))
+			return (head);
+		head = head->next;
+	}
+	return (NULL);
 }

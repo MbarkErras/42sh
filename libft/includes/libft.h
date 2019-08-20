@@ -106,4 +106,5 @@ int				is_flag(char *flag, char *supported);
 int				isalnum_check(char *str);
 t_string		*t_string_copy(t_string *list);
 int				is_directory(char *filename);
+int			ft_isnumber(char *string);
 #endif

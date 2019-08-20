@@ -229,6 +229,7 @@ char			*delete_chars(char *str, int start, int size);
 # define F_PIP 15
 # define F_FRK 16
 # define N_CHD 17
+# define H_PRM 18
 
 
 # define N_XST_T ": no such file or directory: "
@@ -249,6 +250,7 @@ char			*delete_chars(char *str, int start, int size);
 # define F_PIP_T ": pipe failed"
 # define F_FRK_T ": fork failed"
 # define N_CHD_T "no child processes"
+# define H_PRM_T "not valid range"
 
 /*
  ** PARSING
@@ -370,6 +372,8 @@ int				execute_process(t_process *process, pid_t gid, int fg);
 
 # define F_CHANGED 0
 # define F_NEW 1
+
+# define POSI(x, s) x < 0 ? size - x : x;
 
 t_hist	*t_hist_construct(t_hist entry);
 void	ack_history_change(t_list *node);
