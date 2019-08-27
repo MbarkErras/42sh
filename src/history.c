@@ -20,9 +20,7 @@ int	history_dispatcher(char c, char **in)
 		return (history_delete(in));
 	else if (c == 'a' || c == 'w')
 		return (history_write(in, c));
-	else if (c == 'n')
-		return ();
-	else if (c == 'r')
+	else if (c == 'r' || c == 'n')
 		return ();
 	else if (c == 'p')
 		return ();

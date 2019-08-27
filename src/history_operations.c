@@ -89,3 +89,28 @@ int	history_write(char **in, char c)
 	}
 	return (1);
 }
+
+int	history_read(char **in, char c)
+{
+	int fn;
+	char *history_content;
+	char **new;
+	int i;
+
+	if (in[0])
+	{
+		if (fn = read_env("HISTFILE"))
+			return (ft_perror(EXEC_NAME, NULL, X_ARG)); //too many args	
+	}
+	if (fn = read_env("HISTFILE"))
+		return (ft_perror(EXEC_NAME, NULL, N_PRM)); //HISTFILE not set
+	if (history_content = file_reader(fn))
+		return (-1);
+	list_delete(sh_config_getter(NULL)->hist, hist_node_del);
+	new = ft_strsplit(history_content, '\n');
+	i = 0;
+	while (new[i])
+		list_push_back(&sh_config_getter(NULL)->hist, list_create_node(t_hist_construct((t_hist){new[i], time(NULL), NULL, 0}), sizeof(t_hist)));
+	return (0);
+
+}
