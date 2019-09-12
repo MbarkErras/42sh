@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@1337.ma>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/12 17:04:55 by yoyassin          #+#    #+#             */
-/*   Updated: 2019/09/12 17:07:52 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/09/12 17:51:20 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,10 +72,7 @@ void		squotes_checker(char **line, char *q, int *i)
 {
 	*q = !(*q);
 	if (ending_quote(*line, i))
-	{
-		q = !(*q);
-		return ;
-	}
+		*q = !(*q);
 	while (*q)
 	{
 		get_input(line, sh_config_getter(NULL), "q> ");
