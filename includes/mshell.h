@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mshell.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: merras <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: yoyassin <yoyassin@1337.ma>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/27 21:49:12 by merras            #+#    #+#             */
-/*   Updated: 2019/08/18 10:37:47 by merras           ###   ########.fr       */
+/*   Updated: 2019/09/12 17:07:34 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -294,6 +294,8 @@ char			*delete_chars(char *str, int start, int size);
 # define RIGHT_OPR 0b00000010
 
 t_job			*parse(t_shell_config *sh);
+void			dquotes_checker(char **line, char *dq, int *i, int *j);
+void			squotes_checker(char **line, char *q, int *i);
 char			*check_redirections(char *str, t_process *cmd, t_shell_config *sh);
 char			escape_char(char c);
 int				get_redir_fds(t_redir *curr, char *str, int *i);

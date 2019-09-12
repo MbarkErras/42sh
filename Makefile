@@ -1,24 +1,35 @@
 NAME=21sh
 
-SRCS=b_cd.c \
-	 builtins.c \
-	 builtins_drivers.c \
-	 env_drivers.c \
-	 execution.c \
-	 is_delimited.c \
-	 clipboard.c \
-	 terminal.c \
-	 command_line_editor.c \
-	 cursor_motion.c \
-	 dispatchers.c \
-	 move_line.c \
-	 move_word.c \
-	 read_input.c \
-	 cleanup.c \
-	 error_handling.c \
-	 mshell.c \
-	 history_utilities.c \
-	 redirections.c
+SRCS=autocompletion.c \
+			b_cd.c \
+			builtins.c \
+			builtins_drivers.c \
+			cleanup.c \
+			clipboard.c \
+			command_line_editor.c \
+			cursor_motion.c \
+			dispatchers.c \
+			env_drivers.c \
+			error_handling.c \
+			escape_god.c \
+			execution.c \
+			expansions.c \
+			history.c \
+			history_utilities.c \
+			is_delimited.c \
+			job_control.c \
+			move_line.c \
+			move_word.c \
+			mshell.c \
+			parse.c \
+			quoting.c \
+			parse_heredoc.c \
+			parse_redir2.c \
+			parse_redir.c \
+			read_input.c \
+			redirections.c \
+			terminal.c \
+			variables.c \
 
 OBJS=$(SRCS:.c=.o)
 
@@ -60,5 +71,3 @@ re: relib fclean all
 relib:
 	make -C $(LIBFT_DIR) re
 	make -C $(SIMPLIST_DIR) re
-
-

@@ -7,7 +7,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mshell.h"
+#include "../includes/mshell.h"
 
 t_shell_config	*sh_config_getter(t_shell_config *sh_set)
 {
@@ -90,7 +90,10 @@ int				main(void)
 		//check_jobs_state();
 		read_cline(PRMPT(F_GET(sh.flags, F_LASTRET)), &sh);
 		if (ft_strequ(sh.in, "exit"))
+		{
+			system("reset");
 			exit(0);
+		}
 		if (!(sh.jobs = parse(&sh)))
 			continue ;
 		// execute_jobs(sh.jobs);

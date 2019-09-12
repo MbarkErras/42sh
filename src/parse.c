@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: yoyassin <yoyassin@1337.ma>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/27 16:25:14 by merras            #+#    #+#             */
-/*   Updated: 2019/08/17 22:17:20 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/09/12 17:06:57 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,100 +62,25 @@ void		print_parsing_res(t_job *head)
 
 char		*pre_parse(t_shell_config *sh)
 {
-	char	*endq;
 	char	*line;
-	int 	done;
 	int		i;
+	int		j;
 	char	q;
 	char	dq;
-	char	*tmp;
 
 	q = 0;
 	dq = 0;
 	i = 0;
-	done = 0;
-	endq = NULL;
-	tmp = NULL;
+	j = 0;
 	line = ft_strdup(sh->in);
-	// printf("line: %s\n", line);
-	int	j =0;
-	int	k = 0;
 	while (line[i])
 	{
 		if (!q && line[i] == '"' && line[i - 1] != UQ_ESCAPE)
-		{
-			dq = !dq;
-			while ((endq = ft_strchr(line + i + 1, '"')))
-			{
-				i = ft_strlen(line) - ft_strlen(endq);
-				while (j < i)
-				{
-					if (line[j - 1] != Q_ESCAPE && line[j] == 92)
-						line[j] = Q_ESCAPE;
-					j++;
-				}
-				if (line[i - 1] != Q_ESCAPE)
-				{
-					dq = !dq;
-					break ;
-				}
-			}
-			while (dq)
-			{
-				line = ft_fstrjoin(line, ft_strdup("\n"));
-				read_cline("dq> ", sh);
-				tmp = line;
-				line = ft_strjoin(line, sh->in);
-				free(tmp);
-				while ((endq = ft_strchr(line + i + 1, '"')))
-				{
-					i = ft_strlen(line) - ft_strlen(endq);
-					while (j < i)
-					{
-						if (line[j - 1] != Q_ESCAPE && line[j] == 92)
-							line[j] = Q_ESCAPE;
-						j++;
-					}
-					if (line[i - 1] != Q_ESCAPE)
-					{
-						dq = !dq;
-						done = 1;
-						i++;
-						break ;
-					}
-				}
-			}
-		}
+			dquotes_checker(&line, &dq, &i, &j);
 		else if (!dq && line[i] == '\'' && line[i - 1] != UQ_ESCAPE)
-		{
-			q = !q;
-			if ((endq = ft_strchr(line + i + 1, '\'')))
-			{
-				q = !q;
-				i = ft_strlen(line) - ft_strlen(endq);
-			}
-			while (q)
-			{
-				line = ft_fstrjoin(line, ft_strdup("\n"));
-				read_cline("q> ", sh);
-				tmp = line;
-				line = ft_strjoin(line, sh->in);
-				free(tmp);
-				if (ft_strchr(sh->in, '\''))
-				{
-					q = !q;
-					done = 1;
-					break ;
-				}
-			}
-		}
+			squotes_checker(&line, &q, &i);
 		else if (!q && !dq && line[i - 1] != UQ_ESCAPE && line[i] == 92)
 			line[i] = UQ_ESCAPE;
-		if (done)
-		{
-			done = 0;
-			continue ;
-		}
 		i++;
 	}
 	return (line);
@@ -444,15 +369,10 @@ t_job		*parse(t_shell_config *sh)
 	line = pre_parse(sh);
 	sh->in = ft_strdup(line);
 	mark_operators(line);
-	// for (int i = 0; i < ft_strlen(line) ; i++)
-	// 	if (line[i] == UQ_ESCAPE)
-	// 		printf("%d\n", line[i]);
-	// 	else if (line[i] == Q_ESCAPE)
-	// 		printf("%d\n", line[i]);
 	if (check_syntax_errors(line))
 		return (NULL);
 	apply_globbing(&line);
-	printf("line: %s\n", line);
+	// printf("line: %s\n", line);
 	cmd_chain = ft_strsplit(line, SEMI_COL);
 	int	j;
 	int	old_j = 0;
