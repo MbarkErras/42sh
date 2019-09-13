@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@1337.ma>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/27 16:25:14 by merras            #+#    #+#             */
-/*   Updated: 2019/09/12 17:52:09 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/09/13 17:37:23 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,15 +35,17 @@ int		ft_isspace(int c)
 void		print_parsing_res(t_job *head)
 {
 	int a = 1;
+	int	b = 1;
 
 	while (head)
 	{
 		printf("job: %d\n", a);
 		while (head->processes)
 		{
+			printf("process nb: %d\n", b);
 			while (*head->processes->arg)
 			{
-				printf("\nprocess: %s\n", *head->processes->arg);
+				printf("\nargs: %s\n", *head->processes->arg);
 				while (head->processes->redir)
 				{
 					printf("Redir:\n type: %d, src_fd: %d, dst_fd: %d, file: %s\n",
@@ -53,6 +55,7 @@ void		print_parsing_res(t_job *head)
 				head->processes->arg++;
 			}
 			head->processes = head->processes->next;
+			b++;
 		}
 		printf("FLAG: %d\n", head->flag);
 		a++;
@@ -86,6 +89,49 @@ char		*pre_parse(t_shell_config *sh)
 	return (line);
 }
 
+int				dc_operator(char *line, int i)
+{
+	if (line[i] == '&' && line[i + 1] == '&')
+	{
+		line[i] = AND;
+		return (1 && (line[i + 1] = AND));
+	}
+	else if (line[i] == '|' && line[i + 1] == '|')
+	{
+		line[i] = OR;
+		return (1 && (line[i + 1] = OR));
+	}
+	else if (line[i] == '>' && line[i + 1] == '>')
+	{
+		line[i] = APP_OUT_RED_OP;
+		return (1 && (line[i + 1] = APP_OUT_RED_OP));
+	}
+	else if (line[i] == '<' && line[i + 1] == '<')
+	{
+		line[i] = HEREDOC_OP;
+		return (1 && (line[i + 1] = HEREDOC_OP));
+	}
+	return (0);
+}
+
+int				sc_operator(char *line, int i)
+{
+	if (line[i] == ';')
+		return (1 && (line[i] = SEMI_COL));
+	else if (line[i - 1] != UQ_ESCAPE && line[i] == 92)
+		return (1 && (line[i] = UQ_ESCAPE));
+	else if (line[i] == '|' && line[i + 1] != '|')
+		return (1 && (line[i] = PIPE));
+	else if ((line[i] == '>' || line[i] == '<') && (line[i + 1] != '>' && line[i + 1] != '<'))
+	{
+		if (line[i] == '>')
+			return (1 && (line[i] = OUT_RED_OP));
+		else if (line[i] == '<')
+			return (1 && (line[i] = IN_RED_OP));
+	}
+	return (0);
+}
+
 void			mark_operators(char *line)
 {
 	int		i;
@@ -103,41 +149,10 @@ void			mark_operators(char *line)
 			q = !q;
 		if (!q && !dq)
 		{
-			if (line[i] == ';')
-				line[i] = SEMI_COL;
+			if (sc_operator(line, i) || dc_operator(line, i)) /*should recheck the validity of operators */
+				continue ;
 			else if (ft_isspace(line[i]))
 				line[i] = BLANK;
-			else if (line[i - 1] != UQ_ESCAPE && line[i] == 92)
-				line[i] = UQ_ESCAPE;
-			else if (line[i] == '|' && line[i + 1] != '|')
-				line[i] = PIPE;
-			else if (line[i] == '&' && line[i + 1] == '&')
-			{
-				line[i] = AND;
-				line[i + 1] = AND;
-			}
-			else if (line[i] == '|' && line[i + 1] == '|')
-			{
-				line[i] = OR;
-				line[i + 1] = OR;
-			}
-			else if (line[i + 1] != '>' && line[i + 1] != '<')
-			{
-				if (line[i] == '>')
-					line[i] = OUT_RED_OP;
-				else if (line[i] == '<')
-					line[i] = IN_RED_OP;
-			}
-			else if (line[i] == '>' && line[i + 1] == '>')
-			{
-				line[i] = APP_OUT_RED_OP;
-				line[i + 1] = APP_OUT_RED_OP;
-			}
-			else if (line[i] == '<' && line[i + 1] == '<')
-			{
-				line[i] = HEREDOC_OP;
-				line[i + 1] = HEREDOC_OP;
-			}
 		}
 		else if (dq && line[i - 1] != Q_ESCAPE && line[i] == 92)
 			line[i] = Q_ESCAPE;
@@ -317,6 +332,20 @@ int				get_operands(char *line, int *i, char t_op, int *o_i)
 	}
 	return (operands);
 }
+
+int		ft_putendline(char const *s)
+{
+	int i;
+
+	i = 0;
+	while (s[i] != '\0')
+	{
+		ft_putchar(s[i]);
+		i++;
+	}
+	ft_putchar('\n');
+	return (1);
+}
 /*
 ** Needs more testing.
 */
@@ -335,21 +364,14 @@ int				check_syntax_errors(char *line)
 		{
 			if (TWO_C_OPS(i, _OR, _EQ))
 				t_op = 1;
-			if ((ops = get_operands(line, &i, t_op, &j)) == 1 && (line[j] == SEMI_COL))
-			{
-				i++;
-				continue ;
-			}
-			else if ((IS_REDIR_OP(j, _OR, _EQ)) && (ops & RIGHT_OPR) == RIGHT_OPR)
+			if ((ops = get_operands(line, &i, t_op, &j)) == 1 && (line[j] == SEMI_COL)
+			|| ((IS_REDIR_OP(j, _OR, _EQ)) && (ops & RIGHT_OPR) == RIGHT_OPR))
 			{
 				i++;
 				continue ;
 			}
 			else if ((ops & RIGHT_OPR) != RIGHT_OPR || (ops & LEFT_OPR) != LEFT_OPR)
-			{
-				ft_putendl("syntax error.");
-				return (1);
-			}
+				return (ft_putendline("syntax error."));
 		}
 		i++;
 	}
