@@ -1,6 +1,5 @@
 NAME=21sh
 
-<<<<<<< HEAD
 SRCS=b_cd.c \
 	 builtins.c \
 	 builtins_drivers.c \
@@ -21,39 +20,17 @@ SRCS=b_cd.c \
 	 utils.c \
 	 history_utilities.c \
 	 history.c \
-	 redirections.c
-=======
-SRCS=autocompletion.c \
-			b_cd.c \
-			builtins.c \
-			builtins_drivers.c \
-			cleanup.c \
-			clipboard.c \
-			command_line_editor.c \
-			cursor_motion.c \
-			dispatchers.c \
-			env_drivers.c \
-			error_handling.c \
-			escape_god.c \
-			execution.c \
-			expansions.c \
-			history.c \
-			history_utilities.c \
-			is_delimited.c \
-			job_control.c \
-			move_line.c \
-			move_word.c \
-			mshell.c \
-			parse.c \
-			quoting.c \
-			parse_heredoc.c \
-			parse_redir2.c \
-			parse_redir.c \
-			read_input.c \
-			redirections.c \
-			terminal.c \
-			variables.c \
->>>>>>> 774fdc1b3ea5995c4b6d34c6d218e4ff3a8b2919
+	 history_operations.c \
+	 history_ps.c \
+	 expansions.c \
+	 history_file_operations.c \
+	 quoting.c \
+	 parse.c \
+	 parse_heredoc.c \
+	 parse_redir2.c \
+	 parse_redir.c \
+	 read_input.c \
+	 redirections.c \
 
 OBJS=$(SRCS:.c=.o)
 

@@ -27,7 +27,7 @@ int	history_s(char **in)
 
 	if (!in)
 		return (-1);
-	add = NULL:
+	add = NULL;
 	while (*in)
 	{
 		ft_strjoin_free(add, *in, 1);

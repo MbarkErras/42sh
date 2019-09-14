@@ -4,7 +4,7 @@ int	history_drange(int *start, int *end, char *arg)
 {
 	char *dash;
 
-	if ((dash = ft_strchr(arg + 1, '-') && dash != arg + 1))
+	if (((dash = ft_strchr(arg + 1, '-')) && dash != arg + 1))
 	{
 		if (arg[0] != '-' && !ft_isdigit(arg[0]))
 			return (0);
@@ -34,7 +34,7 @@ int	history_delete(char **in)
 	t_list **head;
 	size_t size;
 
-	if (!n[0])
+	if (!in[0])
 		return (ft_perror(EXEC_NAME, NULL, N_ARG)); //no args
 	if (in[1])
 		return (ft_perror(EXEC_NAME, NULL, X_ARG)); //too many args
@@ -49,12 +49,13 @@ int	history_delete(char **in)
 				list_indexed_node(*head, start)),
 			list_pointer_address(head,
 				list_indexed_node(*head, end)),
-			del_node_hist);
+			hist_node_del);
 	return (0);
 }
 
-int	hist_new(t_hist *entry)
+int	hist_new(void *e)
 {
+	t_hist *entry = (t_hist *)e;
 	if (F_GET(entry->flags, F_NEW))
 		return (1);
 	return (0);
@@ -68,7 +69,7 @@ int	history_write(char **in, char c)
 
 	if (!in[0])
 	{
-		if (fn = read_env("HISTFILE"))
+		if ((fn = read_env("HISTFILE")))
 			return (ft_perror(EXEC_NAME, NULL, N_PRM)); //HISTFILE not set
 	}
 	else
@@ -77,7 +78,7 @@ int	history_write(char **in, char c)
 			return (ft_perror(EXEC_NAME, NULL, X_ARG)); //too many args
 		fn = in[0];
 	}
-	if ((fd = open(fn, c == 'a' ? O_APPEND : O_WRITE) == -1))
+	if ((fd = open(fn, c == 'a' ? O_APPEND : O_WRONLY) == -1))
 			return (ft_perror(EXEC_NAME, NULL, B_HFL)); //open error
 	head = sh_config_getter(NULL)->hist;
 	head = c == 'a' ? list_find_node(head, hist_new) : head;
@@ -93,18 +94,21 @@ int	history_write(char **in, char c)
 int	history_read(char **in, char c)
 {
 	int fn;
+	char *history_file;
 	char *history_content;
 	char **new;
 	int i;
 
 	if (in[0])
 	{
-		if (fn = read_env("HISTFILE"))
+		if ((history_file = read_env("HISTFILE")))
 			return (ft_perror(EXEC_NAME, NULL, X_ARG)); //too many args	
 	}
-	if (fn = read_env("HISTFILE"))
+	if ((history_file = read_env("HISTFILE")))
 		return (ft_perror(EXEC_NAME, NULL, N_PRM)); //HISTFILE not set
-	if (history_content = file_reader(fn))
+	if ((fn = open(history_file, O_RDONLY)))
+		return (ft_perror(EXEC_NAME, NULL, B_HFL)); //open error
+	if ((history_content = file_reader(fn)))
 		return (-1);
 	list_delete(sh_config_getter(NULL)->hist, hist_node_del);
 	new = ft_strsplit(history_content, '\n');
@@ -112,5 +116,4 @@ int	history_read(char **in, char c)
 	while (new[i])
 		list_push_back(&sh_config_getter(NULL)->hist, list_create_node(t_hist_construct((t_hist){new[i], time(NULL), NULL, 0}), sizeof(t_hist)));
 	return (0);
-
 }
