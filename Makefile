@@ -17,7 +17,9 @@ SRCS=b_cd.c \
 	 cleanup.c \
 	 error_handling.c \
 	 mshell.c \
+	 utils.c \
 	 history_utilities.c \
+	 history.c \
 	 redirections.c
 
 OBJS=$(SRCS:.c=.o)

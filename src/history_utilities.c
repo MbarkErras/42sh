@@ -6,7 +6,7 @@
 /*   By: merras <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/16 10:40:44 by merras            #+#    #+#             */
-/*   Updated: 2019/08/17 17:56:20 by merras           ###   ########.fr       */
+/*   Updated: 2019/08/18 12:51:44 by merras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ t_hist	*t_hist_construct(t_hist entry)
 	node->value = entry.value;
 	node->fever = ft_strdup(entry.value);
 	node->date = entry.date;
+	node->flags = 0;
 	return (node);
 }
 
@@ -28,7 +29,7 @@ void	ack_history_change(t_list *node)
 	if (!node)
 		return ;
 	if (!ft_strequ(((t_hist *)(node->content))->value, ((t_hist *)(node->content))->fever))
-		((t_hist *)(node->content))->changed = 1;
+		F_SET(((t_hist *)(node->content))->changed, F_CHANGED);
 }
 
 void	read_history_resetting(void)
@@ -36,5 +37,33 @@ void	read_history_resetting(void)
 	if (!rd_config_getter(NULL)->editing_history_node)
 		return ;
 	((t_hist *)(rd_config_getter(NULL)->editing_history_node->content))->value = ((t_hist *)(rd_config_getter(NULL)->editing_history_node->content))->fever;
-	((t_hist *)(rd_config_getter(NULL)->editing_history_node->content))->changed = 0;
+	F_UNSET(((t_hist *)(rd_config_getter(NULL)->editing_history_node->content))->changed, F_CHANGED);
+}
+
+int		print_history()
+{
+	t_list		*history;
+	t_3tuple	sizes;
+
+	history = sh_config_getter(NULL)->hist;
+	sizes.i = 0;
+	sizes.j = ft_digitscount((long long int)list_size(history));
+	while (history && ++sizes.i)
+	{
+		sizes.k = sizes.j - ft_digitscount(sizes.i) + 2;
+		while (sizes.k--)
+			ft_putchar(' ');
+		ft_putnbr(sizes.i);
+		ft_putstr(F_GET(((t_hist *)history->content)->changed, F_CHANGED) ? "* " : "  ");
+		ft_putendl(((t_hist *)history->content)->value);
+		history = history->next;	
+	}
+	return (1);
+}
+
+void	hist_node_del(t_hist *node)
+{
+	ft_strdel(&node->value);
+	ft_strdel(&node->fever);
+	free(node);
 }

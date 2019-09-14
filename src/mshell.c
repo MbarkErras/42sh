@@ -87,13 +87,24 @@ int				main(void)
 	init_shell_config(&sh);
 	while (1)
 	{
-		//check_jobs_state();
 		read_cline(PRMPT(F_GET(sh.flags, F_LASTRET)), &sh);
+<<<<<<< HEAD
 		if (ft_strequ(sh.in, "exit"))
 			exit(0);
 		if (!(sh.jobs = parse(&sh)))
 			continue ;
 		// execute_jobs(sh.jobs);
 		// /!\ execution cleanup function required
+=======
+		if (ft_strlen(*rd_config_getter(NULL)->in))
+		{
+			list_push_back(&sh.hist, list_create_node(t_hist_construct((t_hist){ft_strdup(*rd_config_getter(NULL)->in), time(NULL), NULL, 2}), sizeof(t_hist)));
+			read_history_resetting();
+		}
+
+		char **temp = malloc(sizeof(char **) * 2);
+		temp[1] = NULL;
+		b_history(temp);
+>>>>>>> history
 	}
 }

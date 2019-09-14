@@ -6,7 +6,7 @@
 /*   By: merras <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/27 21:49:12 by merras            #+#    #+#             */
-/*   Updated: 2019/08/18 10:37:47 by merras           ###   ########.fr       */
+/*   Updated: 2019/08/18 12:51:52 by merras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ typedef struct	s_hist
 	char			*value;
 	time_t			date;
 	char			*fever;
-	int				changed;
+	int			flags;
 }				t_hist;
 
 typedef struct	s_shell_config
@@ -222,13 +222,14 @@ char			*delete_chars(char *str, int start, int size);
 # define N_TRM 8
 # define A_TRM 9
 # define S_TRM 10
-# define N_TTY 11
+//# define N_TTY 11
 # define F_EXE 12
 # define I_DIR 13
 # define N_ENV 14
 # define F_PIP 15
 # define F_FRK 16
 # define N_CHD 17
+# define H_PRM 18
 
 
 # define N_XST_T ": no such file or directory: "
@@ -249,6 +250,7 @@ char			*delete_chars(char *str, int start, int size);
 # define F_PIP_T ": pipe failed"
 # define F_FRK_T ": fork failed"
 # define N_CHD_T "no child processes"
+# define H_PRM_T "not valid range"
 
 /*
  ** PARSING
@@ -368,8 +370,15 @@ int				execute_process(t_process *process, pid_t gid, int fg);
 ** HISTORY
 */
 
+# define F_CHANGED 0
+# define F_NEW 1
+
+# define POSI(x, s) x < 0 ? size - x : x;
+
 t_hist	*t_hist_construct(t_hist entry);
 void	ack_history_change(t_list *node);
 void	read_history_resetting();
+int		b_history(char **in);
+int		print_history();
 
 #endif
