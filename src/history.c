@@ -6,7 +6,7 @@
 /*   By: merras <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/03 21:31:42 by merras            #+#    #+#             */
-/*   Updated: 2019/08/18 12:51:46 by merras           ###   ########.fr       */
+/*   Updated: 2019/09/14 20:08:16 by merras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,11 +21,11 @@ int	history_dispatcher(char c, char **in)
 	else if (c == 'a' || c == 'w')
 		return (history_write(in, c));
 	else if (c == 'r' || c == 'n')
-		return ();
+		return (0);
 	else if (c == 'p')
-		return ();
+		return (1);
 	else if (c == 's')
-		return ();
+		return (2);
 	return (0);
 }
 
@@ -51,7 +51,7 @@ int	b_history(char **in)
 	if (!in[1])
 		return (print_history());
 	i = 0;
-	ft_memset(flags, 0, sizeof(flags));
+	ft_memset(flagset, 0, sizeof(flagset));
 	while (in[++i][0] == '-')
 	{
 		if (!is_flag(in[i] + 1, "cdanrwps"))

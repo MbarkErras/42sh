@@ -14,6 +14,12 @@ SRCS=autocompletion.c \
 			escape_god.c \
 			execution.c \
 			expansions.c \
+			history.c\
+			history_file_operations.c \
+			history_operations.c \
+			history_ps.c \
+			history_utilities.c \
+			utils.c \
 			is_delimited.c \
 			job_control.c \
 			move_line.c \

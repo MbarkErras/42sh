@@ -71,26 +71,23 @@ size_t	list_size(t_list *head)
  * deletes a node in a list and relink accordinly, if head != NULL it returns head address after deletion.
  */
 
-t_list	*list_delete_node(t_list *head, t_list **node, void(*delete_node)(void))
+t_list	*list_delete_node(t_list *head, t_list **node, void(*delete_node)(void *))
 {
-	t_list *prev;
-	t_list *next;
-
 	if (!node || !*node)
 		return (NULL);
 	if (head == *node)
 	{
-		head = *node->next;
-		delete_node(*node->content);
+		head = (*node)->next;
+		delete_node((*node)->content);
 		free(*node);
 		*node = NULL;
 		return (head);
 	}
-	if (*node->next)
-		*node->next->prev = *node->prev;
-	if (*node->prev)
-		*node->prev->next = *node->next;
-	delete_node(*node->content);
+	if ((*node)->next)
+		(*node)->next->prev = (*node)->prev;
+	if ((*node)->prev)
+		(*node)->prev->next = (*node)->next;
+	delete_node((*node)->content);
 	free(*node);
 	*node = NULL;
 	return (head);
@@ -111,13 +108,14 @@ t_list	*list_delete_range(t_list *head, t_list **from, t_list **to, void(*delete
 	t_list	*sentinel;
 
 	if (!from || !*from || !to)
-	sentinel = *to ? NULL : *to->next;
-	while (*from->next != sentinel)
-		list_delete_node(head, &*from->next, delete_node);
+		return (NULL);
+	sentinel = *to ? NULL : (*to)->next;
+	while ((*from)->next != sentinel)
+		list_delete_node(head, &(*from)->next, delete_node);
 	return (list_delete_node(head, from, delete_node));
 }
 
-size_t	list_node_index(t_list *head, *node)
+size_t	list_node_index(t_list *head, t_list *node)
 {
 	size_t index;
 
@@ -142,7 +140,7 @@ t_list	*list_indexed_node(t_list *head, size_t index)
 		if (i == index)
 			return (head);	
 		i++;
-		head->next;
+		head = head->next;
 	}
 	return (0);
 }
@@ -155,7 +153,7 @@ t_list	**list_pointer_address(t_list **head, t_list *node)
 		return (NULL);
 	if (*head == node)
 		return (head);
-	i = head;
+	i = *head;
 	while (i)
 	{
 		if (i == node)
