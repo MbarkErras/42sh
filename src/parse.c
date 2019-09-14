@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: yoyassin <yoyassin@1337.ma>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/27 16:25:14 by merras            #+#    #+#             */
-/*   Updated: 2019/08/17 22:17:20 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/09/13 17:37:23 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,15 +35,17 @@ int		ft_isspace(int c)
 void		print_parsing_res(t_job *head)
 {
 	int a = 1;
+	int	b = 1;
 
 	while (head)
 	{
 		printf("job: %d\n", a);
 		while (head->processes)
 		{
+			printf("process nb: %d\n", b);
 			while (*head->processes->arg)
 			{
-				printf("\nprocess: %s\n", *head->processes->arg);
+				printf("\nargs: %s\n", *head->processes->arg);
 				while (head->processes->redir)
 				{
 					printf("Redir:\n type: %d, src_fd: %d, dst_fd: %d, file: %s\n",
@@ -53,6 +55,7 @@ void		print_parsing_res(t_job *head)
 				head->processes->arg++;
 			}
 			head->processes = head->processes->next;
+			b++;
 		}
 		printf("FLAG: %d\n", head->flag);
 		a++;
@@ -62,103 +65,71 @@ void		print_parsing_res(t_job *head)
 
 char		*pre_parse(t_shell_config *sh)
 {
-	char	*endq;
 	char	*line;
-	int 	done;
 	int		i;
+	int		j;
 	char	q;
 	char	dq;
-	char	*tmp;
 
 	q = 0;
 	dq = 0;
 	i = 0;
-	done = 0;
-	endq = NULL;
-	tmp = NULL;
+	j = 0;
 	line = ft_strdup(sh->in);
-	// printf("line: %s\n", line);
-	int	j =0;
-	int	k = 0;
 	while (line[i])
 	{
 		if (!q && line[i] == '"' && line[i - 1] != UQ_ESCAPE)
-		{
-			dq = !dq;
-			while ((endq = ft_strchr(line + i + 1, '"')))
-			{
-				i = ft_strlen(line) - ft_strlen(endq);
-				while (j < i)
-				{
-					if (line[j - 1] != Q_ESCAPE && line[j] == 92)
-						line[j] = Q_ESCAPE;
-					j++;
-				}
-				if (line[i - 1] != Q_ESCAPE)
-				{
-					dq = !dq;
-					break ;
-				}
-			}
-			while (dq)
-			{
-				line = ft_fstrjoin(line, ft_strdup("\n"));
-				read_cline("dq> ", sh);
-				tmp = line;
-				line = ft_strjoin(line, sh->in);
-				free(tmp);
-				while ((endq = ft_strchr(line + i + 1, '"')))
-				{
-					i = ft_strlen(line) - ft_strlen(endq);
-					while (j < i)
-					{
-						if (line[j - 1] != Q_ESCAPE && line[j] == 92)
-							line[j] = Q_ESCAPE;
-						j++;
-					}
-					if (line[i - 1] != Q_ESCAPE)
-					{
-						dq = !dq;
-						done = 1;
-						i++;
-						break ;
-					}
-				}
-			}
-		}
+			dquotes_checker(&line, &dq, &i, &j);
 		else if (!dq && line[i] == '\'' && line[i - 1] != UQ_ESCAPE)
-		{
-			q = !q;
-			if ((endq = ft_strchr(line + i + 1, '\'')))
-			{
-				q = !q;
-				i = ft_strlen(line) - ft_strlen(endq);
-			}
-			while (q)
-			{
-				line = ft_fstrjoin(line, ft_strdup("\n"));
-				read_cline("q> ", sh);
-				tmp = line;
-				line = ft_strjoin(line, sh->in);
-				free(tmp);
-				if (ft_strchr(sh->in, '\''))
-				{
-					q = !q;
-					done = 1;
-					break ;
-				}
-			}
-		}
+			squotes_checker(&line, &q, &i);
 		else if (!q && !dq && line[i - 1] != UQ_ESCAPE && line[i] == 92)
 			line[i] = UQ_ESCAPE;
-		if (done)
-		{
-			done = 0;
-			continue ;
-		}
 		i++;
 	}
 	return (line);
+}
+
+int				dc_operator(char *line, int i)
+{
+	if (line[i] == '&' && line[i + 1] == '&')
+	{
+		line[i] = AND;
+		return (1 && (line[i + 1] = AND));
+	}
+	else if (line[i] == '|' && line[i + 1] == '|')
+	{
+		line[i] = OR;
+		return (1 && (line[i + 1] = OR));
+	}
+	else if (line[i] == '>' && line[i + 1] == '>')
+	{
+		line[i] = APP_OUT_RED_OP;
+		return (1 && (line[i + 1] = APP_OUT_RED_OP));
+	}
+	else if (line[i] == '<' && line[i + 1] == '<')
+	{
+		line[i] = HEREDOC_OP;
+		return (1 && (line[i + 1] = HEREDOC_OP));
+	}
+	return (0);
+}
+
+int				sc_operator(char *line, int i)
+{
+	if (line[i] == ';')
+		return (1 && (line[i] = SEMI_COL));
+	else if (line[i - 1] != UQ_ESCAPE && line[i] == 92)
+		return (1 && (line[i] = UQ_ESCAPE));
+	else if (line[i] == '|' && line[i + 1] != '|')
+		return (1 && (line[i] = PIPE));
+	else if ((line[i] == '>' || line[i] == '<') && (line[i + 1] != '>' && line[i + 1] != '<'))
+	{
+		if (line[i] == '>')
+			return (1 && (line[i] = OUT_RED_OP));
+		else if (line[i] == '<')
+			return (1 && (line[i] = IN_RED_OP));
+	}
+	return (0);
 }
 
 void			mark_operators(char *line)
@@ -178,41 +149,10 @@ void			mark_operators(char *line)
 			q = !q;
 		if (!q && !dq)
 		{
-			if (line[i] == ';')
-				line[i] = SEMI_COL;
+			if (sc_operator(line, i) || dc_operator(line, i)) /*should recheck the validity of operators */
+				continue ;
 			else if (ft_isspace(line[i]))
 				line[i] = BLANK;
-			else if (line[i - 1] != UQ_ESCAPE && line[i] == 92)
-				line[i] = UQ_ESCAPE;
-			else if (line[i] == '|' && line[i + 1] != '|')
-				line[i] = PIPE;
-			else if (line[i] == '&' && line[i + 1] == '&')
-			{
-				line[i] = AND;
-				line[i + 1] = AND;
-			}
-			else if (line[i] == '|' && line[i + 1] == '|')
-			{
-				line[i] = OR;
-				line[i + 1] = OR;
-			}
-			else if (line[i + 1] != '>' && line[i + 1] != '<')
-			{
-				if (line[i] == '>')
-					line[i] = OUT_RED_OP;
-				else if (line[i] == '<')
-					line[i] = IN_RED_OP;
-			}
-			else if (line[i] == '>' && line[i + 1] == '>')
-			{
-				line[i] = APP_OUT_RED_OP;
-				line[i + 1] = APP_OUT_RED_OP;
-			}
-			else if (line[i] == '<' && line[i + 1] == '<')
-			{
-				line[i] = HEREDOC_OP;
-				line[i + 1] = HEREDOC_OP;
-			}
 		}
 		else if (dq && line[i - 1] != Q_ESCAPE && line[i] == 92)
 			line[i] = Q_ESCAPE;
@@ -392,6 +332,20 @@ int				get_operands(char *line, int *i, char t_op, int *o_i)
 	}
 	return (operands);
 }
+
+int		ft_putendline(char const *s)
+{
+	int i;
+
+	i = 0;
+	while (s[i] != '\0')
+	{
+		ft_putchar(s[i]);
+		i++;
+	}
+	ft_putchar('\n');
+	return (1);
+}
 /*
 ** Needs more testing.
 */
@@ -410,21 +364,14 @@ int				check_syntax_errors(char *line)
 		{
 			if (TWO_C_OPS(i, _OR, _EQ))
 				t_op = 1;
-			if ((ops = get_operands(line, &i, t_op, &j)) == 1 && (line[j] == SEMI_COL))
-			{
-				i++;
-				continue ;
-			}
-			else if ((IS_REDIR_OP(j, _OR, _EQ)) && (ops & RIGHT_OPR) == RIGHT_OPR)
+			if ((ops = get_operands(line, &i, t_op, &j)) == 1 && (line[j] == SEMI_COL)
+			|| ((IS_REDIR_OP(j, _OR, _EQ)) && (ops & RIGHT_OPR) == RIGHT_OPR))
 			{
 				i++;
 				continue ;
 			}
 			else if ((ops & RIGHT_OPR) != RIGHT_OPR || (ops & LEFT_OPR) != LEFT_OPR)
-			{
-				ft_putendl("syntax error.");
-				return (1);
-			}
+				return (ft_putendline("syntax error."));
 		}
 		i++;
 	}
@@ -444,15 +391,10 @@ t_job		*parse(t_shell_config *sh)
 	line = pre_parse(sh);
 	sh->in = ft_strdup(line);
 	mark_operators(line);
-	// for (int i = 0; i < ft_strlen(line) ; i++)
-	// 	if (line[i] == UQ_ESCAPE)
-	// 		printf("%d\n", line[i]);
-	// 	else if (line[i] == Q_ESCAPE)
-	// 		printf("%d\n", line[i]);
 	if (check_syntax_errors(line))
 		return (NULL);
 	apply_globbing(&line);
-	printf("line: %s\n", line);
+	// printf("line: %s\n", line);
 	cmd_chain = ft_strsplit(line, SEMI_COL);
 	int	j;
 	int	old_j = 0;
