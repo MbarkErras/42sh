@@ -81,6 +81,7 @@ SRCS = ft_atoi.c \
 	is_flag.c \
 	isalnum_check.c \
 	is_dir.c \
+	ft_isnumber.c \
 	t_string_to_array.c
 
 OBJS = $(SRCS:.c=.o)
