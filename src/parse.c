@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/27 16:25:14 by merras            #+#    #+#             */
-/*   Updated: 2019/09/14 19:59:18 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/09/14 23:35:22 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,22 +94,22 @@ int				dc_operator(char *line, int i)
 	if (line[i] == '&' && line[i + 1] == '&')
 	{
 		line[i] = AND;
-		return (1 && (line[i + 1] = AND));
+		return ((line[i + 1] = AND));
 	}
 	else if (line[i] == '|' && line[i + 1] == '|')
 	{
 		line[i] = OR;
-		return (1 && (line[i + 1] = OR));
+		return ((line[i + 1] = OR));
 	}
 	else if (line[i] == '>' && line[i + 1] == '>')
 	{
 		line[i] = APP_OUT_RED_OP;
-		return (1 && (line[i + 1] = APP_OUT_RED_OP));
+		return ((line[i + 1] = APP_OUT_RED_OP));
 	}
 	else if (line[i] == '<' && line[i + 1] == '<')
 	{
 		line[i] = HEREDOC_OP;
-		return (1 && (line[i + 1] = HEREDOC_OP));
+		return ((line[i + 1] = HEREDOC_OP));
 	}
 	return (0);
 }
@@ -117,17 +117,17 @@ int				dc_operator(char *line, int i)
 int				sc_operator(char *line, int i)
 {
 	if (line[i] == ';')
-		return (1 && (line[i] = SEMI_COL));
+		return ((line[i] = SEMI_COL));
 	else if (line[i - 1] != UQ_ESCAPE && line[i] == 92)
-		return (1 && (line[i] = UQ_ESCAPE));
+		return ((line[i] = UQ_ESCAPE));
 	else if (line[i] == '|' && line[i + 1] != '|')
-		return (1 && (line[i] = PIPE));
+		return ((line[i] = PIPE));
 	else if ((line[i] == '>' || line[i] == '<') && (line[i + 1] != '>' && line[i + 1] != '<'))
 	{
 		if (line[i] == '>')
-			return (1 && (line[i] = OUT_RED_OP));
+			return ((line[i] = OUT_RED_OP));
 		else if (line[i] == '<')
-			return (1 && (line[i] = IN_RED_OP));
+			return ((line[i] = IN_RED_OP));
 	}
 	return (0);
 }
@@ -295,7 +295,7 @@ int				is_not_blank(char *line, int j, int i)
 	valid = 0;
 	while (j < i)
 	{
-		if (line[j] != BLANK)
+		if (ft_isprint(line[j]))
 			valid = 1;
 		j++;
 	}
@@ -317,7 +317,6 @@ t_job		*parse(t_shell_config *sh)
 	mark_operators(line);
 	if (check_syntax_errors(line))
 		return (NULL);
-	printf("line after error checking: %s\n", line);
 	apply_globbing(&line);
 	cmd_chain = ft_strsplit(line, SEMI_COL);
 	int	j;

@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/27 21:49:12 by merras            #+#    #+#             */
-/*   Updated: 2019/09/14 22:21:44 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/09/14 22:54:38 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -317,6 +317,7 @@ void			redirections_cleanup(t_redir *redir);
 
 char			*ft_fstrjoin(char *s1, char *s2);
 int				ft_strpos(char *s1, char *s2);
+int				is_not_blank(char *line, int j, int i);
 
 /*
 ** EXPANSIONS

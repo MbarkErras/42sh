@@ -88,19 +88,19 @@ int				main(void)
 	while (1)
 	{
 		read_cline(PRMPT(F_GET(sh.flags, F_LASTRET)), &sh);
-		if (ft_strlen(*rd_config_getter(NULL)->in))
-		{
-			list_push_back(&sh.hist, list_create_node(t_hist_construct((t_hist){ft_strdup(*rd_config_getter(NULL)->in), time(NULL), NULL, 2}), sizeof(t_hist)));
-			read_history_resetting();
-		}
+		// if (ft_strlen(*rd_config_getter(NULL)->in))
+		// {
+		// 	list_push_back(&sh.hist, list_create_node(t_hist_construct((t_hist){ft_strdup(*rd_config_getter(NULL)->in), time(NULL), NULL, 2}), sizeof(t_hist)));
+		// 	read_history_resetting();
+		// }
 		if (ft_strequ(sh.in, "exit"))
 		{
 			system("reset");
 			exit(0);
 		}
-		char **temp = malloc(sizeof(char **) * 2);
-		temp[1] = NULL;
-		b_history(temp);
+		// char **temp = malloc(sizeof(char **) * 2);
+		// temp[1] = NULL;
+		// b_history(temp);
 		if (!(sh.jobs = parse(&sh)))
 			continue ;
 	}

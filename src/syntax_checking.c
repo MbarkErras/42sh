@@ -6,26 +6,30 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/14 19:50:25 by yoyassin          #+#    #+#             */
-/*   Updated: 2019/09/14 19:53:32 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/09/16 12:17:19 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mshell.h"
-
+/*still needs testing in case it fails in valid syntax somehow.*/
 void			counter(char *line, int *j, int o)
 {
+	char	tmp;
+
 	if (!o)
 	{
 		while (*j && IS_OPERATOR(*j, _AND, _NEQ))
 			(*j)--;
-		if (IS_OPERATOR(*j, _OR, _EQ))
+		if ((IS_OPERATOR(*j, _OR, _EQ)))
 			(*j)++;
 	}
 	else
 	{
-		while ((line[*j] && IS_OPERATOR(*j, _AND, _NEQ))
-		|| IS_REDIR_OP(*j, _OR, _EQ))
+		tmp = line[*j - 1];
+		while ((line[*j] && IS_OPERATOR(*j, _AND, _NEQ)) || (tmp >= OR
+		&& (IS_REDIR_OP(*j, _OR, _EQ))))
 			(*j)++;
+		
 	}
 }
 
@@ -73,7 +77,8 @@ int		ft_putendline(char const *s)
 }
 
 /*
-** Needs more testing.
+** -Needs more testing.
+** -Should add & operator.
 */
 
 int				check_syntax_errors(char *line)
@@ -91,7 +96,8 @@ int				check_syntax_errors(char *line)
 		{
 			if (TWO_C_OPS(i, _OR, _EQ))
 				t_op = 1;
-			if (((ops = get_operands(line, &i, t_op, &j)) == 1 && (line[j] == SEMI_COL))
+			if ((((ops = get_operands(line, &i, t_op, &j)) & LEFT_OPR) == LEFT_OPR
+			&& (line[j] == SEMI_COL))
 			|| ((IS_REDIR_OP(j, _OR, _EQ)) && (ops & RIGHT_OPR) == RIGHT_OPR))
 			{
 				i++;
