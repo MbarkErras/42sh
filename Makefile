@@ -1,79 +1,57 @@
-NAME=21sh
+NAME = 21sh
+SRC = src
+BUILD = .build
+INC = includes
+LIB = libft
 
-SRCS=autocompletion.c \
-			b_cd.c \
-			builtins.c \
-			builtins_drivers.c \
-			cleanup.c \
-			clipboard.c \
-			command_line_editor.c \
-			cursor_motion.c \
-			dispatchers.c \
-			env_drivers.c \
-			error_handling.c \
-			escape_god.c \
-			execution.c \
-			expansions.c \
-			history.c\
-			history_file_operations.c \
-			history_operations.c \
-			history_ps.c \
-			history_utilities.c \
-			utils.c \
-			is_delimited.c \
-			job_control.c \
-			move_line.c \
-			move_word.c \
-			mshell.c \
-			build_parse_list.c \
-			parse.c \
-			syntax_checking.c \
-			quoting.c \
-			parse_heredoc.c \
-			parse_redir2.c \
-			parse_redir.c \
-			read_input.c \
-			redirections.c \
-			terminal.c \
-			variables.c \
+SRC_BUILTIN = $(patsubst %.c, $(SRC)/builtins/%.c, b_cd.c builtins.c builtins_drivers.c  env_drivers.c error_handling.c is_delimited.c variables.c)
+SRC_EXECUTION = $(patsubst %.c, $(SRC)/execution/%.c, execution.c job_control.c redirections.c)
+SRC_EXPANSION = $(patsubst %.c, $(SRC)/expansions/%.c, escape_god.c expansions.c)
+SRC_HISTORY = $(patsubst %.c, $(SRC)/history/%.c, history.c history_file_operations.c history_operations.c history_ps.c history_utilities.c utils.c)
+SRC_LINEEDITING = $(patsubst %.c, $(SRC)/line_editing/%.c, autocompletion.c clipboard.c command_line_editor.c cursor_motion.c dispatchers.c move_line.c move_word.c read_input.c terminal.c)
+SRC_PARSING = $(patsubst %.c, $(SRC)/parsing/%.c, build_parse_list.c parse.c parse_heredoc.c parse_redir.c parse_redir2.c quoting.c syntax_checking.c)
+SRC_SHELL = $(patsubst %.c, $(SRC)/shell/%.c, cleanup.c mshell.c)
 
-OBJS=$(SRCS:.c=.o)
+OBJ_BUILTIN = $(patsubst %.c, %.o, $(SRC_BUILTIN))
+OBJ_EXECUTION = $(patsubst %.c, %.o, $(SRC_EXECUTION))
+OBJ_EXPANSIONS = $(patsubst %.c, %.o, $(SRC_EXPANSION))
+OBJ_HISTORY = $(patsubst %.c, %.o, $(SRC_HISTORY))
+OBJ_LINEEDITING = $(patsubst %.c, %.o, $(SRC_LINEEDITING))
+OBJ_PARSING = $(patsubst %.c, %.o, $(SRC_PARSING))
+OBJ_SHELL = $(patsubst %.c, %.o, $(SRC_SHELL))
 
-OBJS_DIR=build
-SRCS_DIR=src
-LIBFT_DIR=libft
-SIMPLIST_DIR=simplist
-OBJS_PATH=$(addprefix $(OBJS_DIR)/, $(OBJS))
-SRCS_PATH=$(addprefix $(SRCS_DIR)/, $(SRCS))
-INCLUDES=includes
-
-FLAGS= -g #-Wall -Werror -Wextra
+OBJECT = $(OBJ_BUILTIN) $(OBJ_EXECUTION) $(OBJ_EXPANSIONS) $(OBJ_HISTORY) $(OBJ_LINEEDITING) $(OBJ_PARSING) $(OBJ_SHELL)
+OBJ_DIR = $(patsubst %, $(BUILD)/%, /$(notdir $(OBJECT)))
+CC = gcc
+FLAGS = -g #-Wall -Wextra -Werror
+INCLUDE = -I$(INC) -I$(LIB)/includes
+LIBFT = $(LIB)/libft.a
+SIMPLIST_DIR = simplist
 
 all: $(NAME)
 
-$(NAME): $(OBJS_PATH) $(INCLUDES)/mshell.h simplist/simplist.c # last dep is temp
-	make -C $(LIBFT_DIR)
+$(NAME): $(LIBFT) $(OBJECT) simplist/simplist.c
+	$(CC) $(FLAGS) $(OBJ_DIR) -ltermcap $(LIBFT) $(SIMPLIST_DIR)/simplist.a -o $(NAME)
+
+$(LIBFT):
+	make -C $(LIB)
 	make -C $(SIMPLIST_DIR)
-	gcc $(FLAGS) $(OBJS_PATH) -ltermcap $(LIBFT_DIR)/libft.a $(SIMPLIST_DIR)/simplist.a  -o $(NAME)
 
-$(OBJS_PATH): $(OBJS_DIR)/%.o : $(SRCS_DIR)/%.c | $(OBJS_DIR)
-	gcc $(FLAGS) -I$(INCLUDES) -I$(LIBFT_DIR)/includes -I$(SIMPLIST_DIR) -c $< -o $@
+%.o : %.c | $(BUILD)
+	$(CC) $(FLAGS) $(INCLUDE) -I$(SIMPLIST_DIR) -c $< -o $(BUILD)/$(notdir $@)
 
-$(OBJS_DIR):
-	mkdir $(OBJS_DIR)
+$(BUILD):
+	mkdir $(BUILD)
 
 clean:
-	make -C $(LIBFT_DIR) clean
+	rm -rf $(BUILD)
+	rm -rf build
+	make -C $(LIB) clean
 	make -C $(SIMPLIST_DIR) clean
-	rm -rf $(OBJS_DIR)
 
 fclean: clean
-	make -C $(LIBFT_DIR) fclean
-	make -C $(SIMPLIST_DIR) fclean
 	rm -rf $(NAME)
+	make -C $(LIB) fclean
+	make -C $(SIMPLIST_DIR) fclean
 
-re: relib fclean all
-
-relib:
-	make -C $(LIBFT_DIR) re
-	make -C $(SIMPLIST_DIR) re
+re : fclean all
