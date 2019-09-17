@@ -25,6 +25,7 @@ SRCS=autocompletion.c \
 			move_line.c \
 			move_word.c \
 			mshell.c \
+			build_parse_list.c \
 			parse.c \
 			syntax_checking.c \
 			quoting.c \

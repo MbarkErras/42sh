@@ -6,18 +6,20 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/11 21:33:24 by yoyassin          #+#    #+#             */
-/*   Updated: 2019/08/11 21:33:47 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/09/16 13:56:51 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/mshell.h"
 
-char	*get_heredoc_string(char *eof, t_shell_config *sh)
+char	*get_heredoc_string(char *eof)
 {
-	char	*buf;
-	char	*tmp;
+	char			*buf;
+	char			*tmp;
+	t_shell_config	*sh;
 
 	buf = ft_strnew(0);
+	sh = sh_config_getter(NULL);
 	while (1)
 	{
 		read_cline("heredoc> ", sh);
@@ -38,7 +40,7 @@ int		get_heredoc_fd(char *str, int i)
 	return (ft_atoi(str + i + 1));
 }
 
-char	*get_heredoc(char *str, int *i, t_shell_config *sh, int *hd_fd)
+char	*get_heredoc(char *str, int *i, int *hd_fd)
 {
 	char	*eof;
 	int		old_i;
@@ -59,5 +61,5 @@ char	*get_heredoc(char *str, int *i, t_shell_config *sh, int *hd_fd)
 		(*i)++;
 	eof = ft_strsub(str, old_i, *i - old_i);
 	ft_memset(str + old_i, BLANK, *i - old_i);
-	return (get_heredoc_string(eof, sh));
+	return (get_heredoc_string(eof));
 }

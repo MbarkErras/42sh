@@ -6,13 +6,69 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/18 20:48:11 by yoyassin          #+#    #+#             */
-/*   Updated: 2019/08/16 22:14:47 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/09/16 13:48:13 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/mshell.h"
 
 char	*get_esc_char(char *str, char c);
+
+void			apply_globbing(char **line)
+{
+	int		i;
+	int		pos;
+	int		start;
+	char	*buf;
+	char	*gl_pattern;
+	char	*s1;
+	char	*s2;
+	char	q;
+	char	dq;
+
+	pos = 0;
+	start = 0;
+	gl_pattern = NULL;
+	s1 = NULL;
+	s2 = NULL;
+	q = 0;
+	dq = 0;
+	i = -1;
+	while ((*line)[++i])
+	{
+		if (!q && (*line)[i] == '"' && (*line[i - 1] != UQ_ESCAPE))
+			dq = !dq;
+		else if (!dq && (*line)[i] == '\'' && (*line)[i - 1] != UQ_ESCAPE)
+			q = !q;
+		if (!q && !dq && (*line)[i] == '*' && (*line)[i - 1] != UQ_ESCAPE)
+		{
+			pos = i;
+			while (i > 0 && (*line)[i] != BLANK && (*line)[i] != SEMI_COL && (*line)[i] != PIPE && (*line)[i] != OR && (*line)[i] != AND)
+				i--;
+			start = i + 1;
+			i = pos;
+			while (i > 0 && (*line)[i] && (*line)[i] != BLANK && (*line)[i] != SEMI_COL && (*line)[i] != PIPE && (*line)[i] != OR && (*line)[i] != AND)
+				i++;
+			gl_pattern = ft_strsub((*line), start, i - start);
+			buf = NULL;
+			if (!apply_glob_expansion(gl_pattern, &buf))
+			{
+				free(gl_pattern);
+				continue ;
+			}
+			for (int i; i < ft_strlen(buf); i++)
+				if (buf[i] == ' ')
+					buf[i] = BLANK;
+			s1 = ft_strsub((*line), 0, start);
+			s2 = ft_strsub((*line), i, ft_strlen((*line)) - ft_strlen(s1) + ft_strlen(gl_pattern) - 1);
+			(*line) = ft_fstrjoin(s1, buf);
+			(*line) = ft_fstrjoin((*line), s2);
+			i = pos + ft_strlen(buf) - 1;
+			free(gl_pattern);
+			free(buf);
+		}
+	}
+}
 
 char		*ft_fstrsub(char const *s, unsigned int start, size_t len)
 {

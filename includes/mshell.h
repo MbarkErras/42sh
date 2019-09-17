@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/27 21:49:12 by merras            #+#    #+#             */
-/*   Updated: 2019/09/14 22:54:38 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/09/17 13:38:06 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,6 @@ typedef struct	s_process
 {
 	char			**arg;
 	int				ret_val;
-
 	/*
 	**	job control related declarations
 	*/
@@ -85,10 +84,10 @@ typedef struct	s_job
 	t_process			*processes;
 	int					return_val;
 	int					flag;
-	/*
-	**	if job is meant for background F_BACKGROUND
-	**	should be set in jcflags
-	*/
+/*
+**	if job is meant for background F_BACKGROUND
+**	should be set in jcflags
+*/
 	pid_t				gid; //should be initialized to 0
 	int					jcflags; //should be initialized to 0
 								//F_BACKGROUND should be set if
@@ -297,16 +296,22 @@ char			*delete_chars(char *str, int start, int size);
 						_O line[i] C APP_OUT_RED_OP _O line[i] C HEREDOC_OP
 # define LEFT_OPR 0b00000001
 # define RIGHT_OPR 0b00000010
+# define APPEND(type) append((void *)head, (void *)&curr, (void *)tail, type)
+# define SETFLAG(type) set_flag(curr, token[j], type)
 
+char			*pre_parse(t_shell_config *sh);
 t_job			*parse(t_shell_config *sh);
 void			dquotes_checker(char **line, char *dq, int *i, int *j);
 void			squotes_checker(char **line, char *q, int *i);
 int				check_syntax_errors(char *line);
-char			*check_redirections(char *str, t_process *cmd, t_shell_config *sh);
+t_job			*get_parse_list(char **cmd_chain);
+t_process		*get_process_list(char *cmd_chain);
+char			*check_redirections(char *str, t_process *cmd);
 char			escape_char(char c);
 int				get_redir_fds(t_redir *curr, char *str, int *i);
 void			get_redir_file(t_redir *curr, char *str, int *i);
-char			*get_heredoc(char *str, int *i, t_shell_config *sh, int *hd_fd);
+char			*get_heredoc(char *str, int *i, int *hd_fd);
+void			apply_globbing(char **line);
 void			apply_expansions(char **args);
 int				apply_glob_expansion(char *gl_pattern, char **args);
 int				execute_command_line(t_job *commands);

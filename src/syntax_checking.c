@@ -6,13 +6,17 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/14 19:50:25 by yoyassin          #+#    #+#             */
-/*   Updated: 2019/09/16 12:17:19 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/09/16 12:32:19 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mshell.h"
-/*still needs testing in case it fails in valid syntax somehow.*/
-void			counter(char *line, int *j, int o)
+
+/*
+**still needs testing in case it fails in valid syntax somehow.
+*/
+
+void	counter(char *line, int *j, int o)
 {
 	char	tmp;
 
@@ -29,11 +33,10 @@ void			counter(char *line, int *j, int o)
 		while ((line[*j] && IS_OPERATOR(*j, _AND, _NEQ)) || (tmp >= OR
 		&& (IS_REDIR_OP(*j, _OR, _EQ))))
 			(*j)++;
-		
 	}
 }
 
-int				get_operands(char *line, int *i, char t_op, int *o_i)
+int		get_operands(char *line, int *i, char t_op, int *o_i)
 {
 	int		j;
 	char	operands;
@@ -81,32 +84,29 @@ int		ft_putendline(char const *s)
 ** -Should add & operator.
 */
 
-int				check_syntax_errors(char *line)
+int		check_syntax_errors(char *line)
 {
 	int		i;
 	char	t_op;
 	char	ops;
 	int		j;
 
-	i = 0;
-	while (line[i])
+	i = -1;
+	while (line[++i])
 	{
 		t_op = 0;
 		if (IS_OPERATOR(i, _OR, _EQ))
 		{
 			if (TWO_C_OPS(i, _OR, _EQ))
 				t_op = 1;
-			if ((((ops = get_operands(line, &i, t_op, &j)) & LEFT_OPR) == LEFT_OPR
-			&& (line[j] == SEMI_COL))
+			ops = get_operands(line, &i, t_op, &j);
+			if (((ops & LEFT_OPR) == LEFT_OPR && line[j] == SEMI_COL)
 			|| ((IS_REDIR_OP(j, _OR, _EQ)) && (ops & RIGHT_OPR) == RIGHT_OPR))
-			{
-				i++;
 				continue ;
-			}
-			else if ((ops & RIGHT_OPR) != RIGHT_OPR || (ops & LEFT_OPR) != LEFT_OPR)
+			else if ((ops & RIGHT_OPR) != RIGHT_OPR
+			|| (ops & LEFT_OPR) != LEFT_OPR)
 				return (ft_putendline("syntax error."));
 		}
-		i++;
 	}
 	return (0);
 }
