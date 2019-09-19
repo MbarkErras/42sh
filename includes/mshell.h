@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/27 21:49:12 by merras            #+#    #+#             */
-/*   Updated: 2019/09/19 17:13:33 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/09/19 18:57:54 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -278,6 +278,7 @@ char			*delete_chars(char *str, int start, int size);
 # define Q_ESCAPE -17
 # define DOLLAR -18
 # define TILDE -19
+# define BG -20
 # define IS_REDIRECTION str[i] == OUT_RED_OP || str[i] == IN_RED_OP || str[i] == APP_OUT_RED_OP
 # define _OR ||
 # define _AND &&
@@ -290,7 +291,8 @@ char			*delete_chars(char *str, int start, int size);
 # define ONE_C_OPS(i, _O, C) line[i] C SEMI_COL _O \
 								line[i] C PIPE _O \
 								line[i] C OUT_RED_OP _O \
-								line[i] C IN_RED_OP
+								line[i] C IN_RED_OP _O\
+								line[i] C BG
 # define IS_OPERATOR(i, _O, C) TWO_C_OPS(i, _O, C) _O ONE_C_OPS(i, _O, C)
 # define IS_REDIR_OP(i, _O, C) line[i] C OUT_RED_OP _O line[i] C IN_RED_OP \
 						_O line[i] C APP_OUT_RED_OP _O line[i] C HEREDOC_OP

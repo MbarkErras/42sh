@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/27 16:25:14 by merras            #+#    #+#             */
-/*   Updated: 2019/09/19 17:15:02 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/09/19 19:22:10 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,9 @@ int				sc_operator(char *line, int i)
 		return ((line[i] = PIPE));
 	else if ((line[i] == '>' || line[i] == '<')
 	&& (line[i + 1] != '>' && line[i + 1] != '<'))
-		line[i] = (line[i] == '>' ? OUT_RED_OP : IN_RED_OP);
+		return ((line[i] = (line[i] == '>' ? OUT_RED_OP : IN_RED_OP)));
+	else if (line[i] == '&' && line[i + 1] != '&')
+		return ((line[i] = BG));
 	return (0);
 }
 
@@ -126,7 +128,7 @@ void			mark_operators(char *line)
 			dq = !dq;
 		else if (!dq && line[i] == '\'' && line[i - 1] != UQ_ESCAPE)
 			q = !q;
-		if (!q && !dq && line[i] == '\'' && line[i - 1] != UQ_ESCAPE)
+		if (!q && !dq && line[i - 1] != UQ_ESCAPE)
 		{
 			if (sc_operator(line, i) || dc_operator(line, i))
 				continue ;
@@ -188,13 +190,14 @@ t_job		*parse(t_shell_config *sh)
 	line = pre_parse(sh);
 	sh->in = ft_strdup(line);
 	mark_operators(line);
+	printf("line: %s\n", line);
 	if (check_syntax_errors(line))
 		return (NULL);
-	apply_globbing(&line);
-	cmd_chain = ft_strsplit(line, SEMI_COL);
-	head = get_parse_list(cmd_chain);
-	t_job *tmp = head;
-	print_parsing_res(tmp);
+	// apply_globbing(&line);
+	// cmd_chain = ft_strsplit(line, SEMI_COL);
+	// head = get_parse_list(cmd_chain);
+	// t_job *tmp = head;
+	// print_parsing_res(tmp);
 	return (head);
 }
 
