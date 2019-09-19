@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/27 16:25:14 by merras            #+#    #+#             */
-/*   Updated: 2019/09/17 13:38:28 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/09/19 17:15:02 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,7 +126,7 @@ void			mark_operators(char *line)
 			dq = !dq;
 		else if (!dq && line[i] == '\'' && line[i - 1] != UQ_ESCAPE)
 			q = !q;
-		if (!q && !dq)
+		if (!q && !dq && line[i] == '\'' && line[i - 1] != UQ_ESCAPE)
 		{
 			if (sc_operator(line, i) || dc_operator(line, i))
 				continue ;
