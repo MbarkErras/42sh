@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/18 20:48:11 by yoyassin          #+#    #+#             */
-/*   Updated: 2019/09/16 13:48:13 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/09/20 11:49:33 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -443,7 +443,7 @@ void		apply_expansions(char **args)
 		}
 		*args = tmp2;
 		remove_quotes(args);
-		printf("arg: %s\n", *args);
+		// printf("arg: %s\n", *args);
 		args++;
 	}
 }

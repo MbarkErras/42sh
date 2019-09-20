@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/27 21:49:12 by merras            #+#    #+#             */
-/*   Updated: 2019/09/19 18:57:54 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/09/20 11:32:44 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ typedef struct	s_process
 	struct s_process	*next;
 }				t_process;
 
-typedef struct	s_job
+typedef struct	s_pr_group
 {
 	t_process			*processes;
 	int					return_val;
@@ -88,13 +88,22 @@ typedef struct	s_job
 **	if job is meant for background F_BACKGROUND
 **	should be set in jcflags
 */
-	pid_t				gid; //should be initialized to 0
-	int					jcflags; //should be initialized to 0
+	// pid_t				gid; //should be initialized to 0
+	// int					jcflags; //should be initialized to 0
 								//F_BACKGROUND should be set if
 								//the job is meant for background
 
+	struct s_pr_group	*next;
+}				t_pr_group;
+
+typedef	struct		s_job
+{
+	t_pr_group		*proc_gr;
+	pid_t			gid;
+	int				jcflags;
 	struct s_job	*next;
-}				t_job;
+}					t_job;
+
 
 typedef struct	s_hist
 {
@@ -109,7 +118,7 @@ typedef struct	s_shell_config
 	t_read			rd;
 	t_list			*hist;
 	t_string		*env;
-	t_job			*jobs;
+	t_job		*jobs;
 	char			*in;
 	char			*cboard;
 	int				flags;
@@ -306,7 +315,8 @@ t_job			*parse(t_shell_config *sh);
 void			dquotes_checker(char **line, char *dq, int *i, int *j);
 void			squotes_checker(char **line, char *q, int *i);
 int				check_syntax_errors(char *line);
-t_job			*get_parse_list(char **cmd_chain);
+t_job			*get_jobs(char **cmd_chain);
+t_pr_group		*get_parse_list(char *cmd_chain);
 t_process		*get_process_list(char *cmd_chain);
 char			*check_redirections(char *str, t_process *cmd);
 char			escape_char(char c);
@@ -316,7 +326,7 @@ char			*get_heredoc(char *str, int *i, int *hd_fd);
 void			apply_globbing(char **line);
 void			apply_expansions(char **args);
 int				apply_glob_expansion(char *gl_pattern, char **args);
-int				execute_command_line(t_job *commands);
+// int				execute_command_line(t_job *commands);
 ///
 ///
 int				apply_redirections(t_redir *redir);
@@ -376,9 +386,9 @@ void			b_exit(char **in);
 # define F_STOP 0
 # define F_COMP 1
 
-int				execute_jobs(t_job *jobs);
-int				execute_job(t_job *job);
-int				execute_process(t_process *process, pid_t gid, int fg);
+// int				execute_jobs(t_job *jobs);
+// int				execute_job(t_job *job);
+// int				execute_process(t_process *process, pid_t gid, int fg);
 
 /*
 ** HISTORY

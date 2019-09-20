@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/14 19:50:25 by yoyassin          #+#    #+#             */
-/*   Updated: 2019/09/19 20:35:28 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/09/19 23:43:22 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ int		check_syntax_errors(char *line)
 			if (TWO_C_OPS(i, _OR, _EQ))
 				t_op = 1;
 			ops = get_operands(line, &i, t_op, &j);
-			if (((ops & LEFT_OPR) == LEFT_OPR && line[j] == SEMI_COL)
+			if (((ops & LEFT_OPR) == LEFT_OPR && (line[j] == SEMI_COL || line[j] == BG))
 			|| ((IS_REDIR_OP(j, _OR, _EQ)) && (ops & RIGHT_OPR) == RIGHT_OPR))
 				continue ;
 			else if ((ops & RIGHT_OPR) != RIGHT_OPR
