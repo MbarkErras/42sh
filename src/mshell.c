@@ -94,6 +94,7 @@ static void		init_shell_config(t_shell_config *sh)
 	sh->hist = NULL;
 	F_SET(sh->flags, F_INTERACTIVE);
 	sh->cboard = ft_strnew(0);
+	sh->monitored = NULL;
 	signal(SIGINT, signal_handler);
 	sh_config_getter(sh);
 	init_terminal();

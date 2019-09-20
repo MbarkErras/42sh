@@ -6,7 +6,7 @@
 /*   By: merras <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/03 21:25:46 by merras            #+#    #+#             */
-/*   Updated: 2019/09/20 15:47:43 by merras           ###   ########.fr       */
+/*   Updated: 2019/09/20 19:20:05 by merras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,6 +110,7 @@ int ft_jobs(char **arg)
 	j = sh_config_getter(NULL)->monitored;
 	while (j)
 	{
+		printf("jobs salina\n");
 		printf("%d -- %s\n", j->gid, j->processes->arg[0]);
 		printf("jobs salina\n");
 		j = j->next;
