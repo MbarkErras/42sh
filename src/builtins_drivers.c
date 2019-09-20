@@ -6,7 +6,7 @@
 /*   By: merras <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/09 17:27:45 by merras            #+#    #+#             */
-/*   Updated: 2019/08/02 18:55:17 by merras           ###   ########.fr       */
+/*   Updated: 2019/09/20 15:47:37 by merras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,9 @@ int		is_builtin(char *cmd)
 		!ft_strcmp("setenv", cmd) ||
 		!ft_strcmp("unsetenv", cmd) ||
 		!ft_strcmp("exit", cmd) ||
+		!ft_strcmp("jobs", cmd) ||
+		!ft_strcmp("fg", cmd) ||
+		!ft_strcmp("bg", cmd) ||
 		!ft_strcmp("env", cmd))
 		return (1);
 	return (0);
@@ -84,6 +87,10 @@ int		builtins_dispatcher(char ***arg)
 	if (!ft_strcmp("env", (*arg)[0]))
 		return (b_env(*arg));
 	if (!ft_strcmp("exit", (*arg)[0]))
-		b_exit(*arg);
+		return (b_env(*arg));
+	if (!ft_strcmp("jobs", (*arg)[0]))
+		return (ft_jobs(*arg));
+	if (!ft_strcmp("fg", (*arg)[0]) || !ft_strcmp("bg", (*arg)[0]))
+		return (jobcontrol_ground_manager(*arg));
 	return (0);
 }

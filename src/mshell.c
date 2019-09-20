@@ -77,7 +77,7 @@ static void		init_shell_config(t_shell_config *sh)
 
 	assert_foreground(sh);
 	signal (SIGINT, SIG_IGN);
-	signal (SIGQUIT, SIG_IGN);
+	//signal (SIGQUIT, SIG_IGN);
 	signal (SIGTSTP, SIG_IGN);
 	signal (SIGTTIN, SIG_IGN);
 	signal (SIGTTOU, SIG_IGN);
@@ -118,6 +118,15 @@ int				main(void)
 			printf("null parsing\n");
 		}
 		execute_jobs(sh.jobs);
-		//add monitored jobs to monitored..
+		//
+		t_job *job;
+		job = sh.jobs;
+		while (job)
+		{
+			if (!job_is_stopped(job->processes))
+					monitor_job(job);
+			job = job->next; 
+		}
+		//
 	}
 }

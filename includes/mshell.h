@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/27 21:49:12 by merras            #+#    #+#             */
-/*   Updated: 2019/09/20 05:04:31 by merras           ###   ########.fr       */
+/*   Updated: 2019/09/20 15:47:42 by merras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -366,14 +366,23 @@ void			b_exit(char **in);
 ** JOB CONTROL
 */
 
+//for jobs
 # define F_BACKGROUND 0
+# define F_JOB_STOPPED 1
+//for shell
 # define F_INTERACTIVE 0
+//for processes
 # define F_STOP 0
 # define F_COMP 1
 
 int				execute_jobs(t_job *jobs);
 int				execute_job(t_job *job);
 int				execute_process(t_process *process, pid_t gid, int fg);
+void	monitor_job(t_job *j);
+int		job_is_stopped(t_process *process);
+void	put_job_in_foreground(t_job *j, int cont);
+void	monitor_job(t_job *j);
+int		jobcontrol_ground_manager(char **arg);
 
 /*
 ** HISTORY
@@ -395,5 +404,4 @@ int     history_write(char **in, char c);
 int     history_read(char **in, char c);
 void	setter(char *set, char *elements);
 char	*file_reader(int fd);
-
 #endif

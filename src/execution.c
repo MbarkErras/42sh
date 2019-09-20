@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/07 19:13:47 by merras            #+#    #+#             */
-/*   Updated: 2019/09/20 05:04:26 by merras           ###   ########.fr       */
+/*   Updated: 2019/09/20 15:47:30 by merras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -215,7 +215,6 @@ return (last_ret);
 
 int		update_job_status(pid_t pid, int status, t_process *process)
 {
-	printf("updating job status\n");
 	if (pid > 0)
 	{
 		while (process)
@@ -245,7 +244,6 @@ int		update_job_status(pid_t pid, int status, t_process *process)
 
 int		job_is_stopped(t_process *process)
 {
-	printf("checking if job is stopped\n");
 	while (process)
 	{
 		if (!F_GET(process->jcflags, F_STOP) &&
@@ -261,28 +259,31 @@ void	wait_for_job(t_job *job)
 	int		status;
 	pid_t	pid;
 
-	printf("waiting for job\n");
 	pid = waitpid(WAIT_ANY, &status, WUNTRACED);
 	while (!update_job_status(pid, status, job->processes)
 			&& !job_is_stopped(job->processes))
 	{
-		printf("yo\n");
 		pid = waitpid(WAIT_ANY, &status, WUNTRACED | WNOHANG);
 	}
-	printf("no more waiting\n");
 }
 
-void	put_job_in_foreground(t_job *job)
+void	put_job_in_foreground(t_job *job, int cont)
 {
-	printf("in foreground\n");
 	tcsetpgrp(STDIN_DUP, job->gid);
+	if (cont)
+	{
+		if (kill (- job->gid, SIGCONT) < 0)
+			perror ("kill (SIGCONT)");
+	}
 	wait_for_job(job);
 	tcsetpgrp(STDIN_DUP, sh_config_getter(NULL)->shell_pgid);
 }
 
-void	put_job_in_background(t_job *job)
+void	put_job_in_background(t_job *job , int cont)
 {
-	printf("in background\n");
+	if (cont)
+		if (kill (-job->gid, SIGCONT) < 0)
+			perror ("kill (SIGCONT)");
 }
 
 int		execute_process(t_process *process, pid_t gid, int bg)
@@ -290,6 +291,14 @@ int		execute_process(t_process *process, pid_t gid, int bg)
 	pid_t	pid;
 	char	*path;
 
+	if (is_builtin(process->arg[0]))
+	{
+		return (builtins_dispatcher(&process->arg));
+	}
+	if (!(path = find_exec(process->arg[0])))
+	{
+		return (ft_perror(EXEC_NAME, process->arg[0], N_EXE));
+	}
 	if (F_GET(sh_config_getter(NULL)->flags, F_INTERACTIVE))
 	{
 		pid = getpid();
@@ -329,7 +338,6 @@ int		execute_job(t_job *job)
 		process->pid = pid;
 		if (F_GET(sh_config_getter(NULL)->flags, F_INTERACTIVE))
 		{
-			printf("adding process to its group\n");
 			if (!job->gid)
 				job->gid = pid;
 			setpgid(pid, job->gid);
@@ -339,9 +347,9 @@ int		execute_job(t_job *job)
 	if (!F_GET(sh_config_getter(NULL)->flags, F_INTERACTIVE))
 	    wait_for_job (job);
 	else if (!F_GET(job->jcflags, F_BACKGROUND))
-		put_job_in_foreground (job);
+		put_job_in_foreground (job, 0);
 	else
-		put_job_in_background (job);
+		put_job_in_background (job, 0);
 	return (0);
 }
 
@@ -352,11 +360,9 @@ int		execute_jobs(t_job *jobs)
 	while (jobs)
 	{
 		F_UNSET(jobs->jcflags, F_BACKGROUND);
-		printf("init input\n");
-		init_terminal();
-		exit = execute_job(jobs);
-		printf("reset input\n");
 		reset_input_mode();
+		exit = execute_job(jobs);
+		init_terminal();
 		if (!jobs->next)
 			return (exit);
 		jobs = jobs->next;

@@ -6,11 +6,38 @@
 /*   By: merras <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/03 21:25:46 by merras            #+#    #+#             */
-/*   Updated: 2019/09/20 05:04:30 by merras           ###   ########.fr       */
+/*   Updated: 2019/09/20 15:47:43 by merras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mshell.h"
+
+void	monitor_job(t_job *j)
+{
+	t_job *jobs;
+	t_job *m;
+
+	jobs = sh_config_getter(NULL)->jobs;
+	m =  sh_config_getter(NULL)->monitored;
+	if (jobs)
+		return ;
+	if (jobs == j)
+	{
+		while (m && m->next)
+			m = m->next;
+		if (!m)
+			sh_config_getter(NULL)->monitored = j;
+		else
+			m->next = j;
+		sh_config_getter(NULL)->jobs = j->next;
+	}
+	while (jobs->next)
+	{
+		if (jobs->next == j)
+			jobs->next = jobs->next->next;
+		jobs = jobs->next;
+	}
+}
 
 int	jobslist_size(t_job *l)
 {
@@ -25,41 +52,28 @@ int	jobslist_size(t_job *l)
 	return (i);
 }
 
-t_job *jobslist_top(t_job *l, int f)
-{
-	if (!l || (!l->next && f))
-		return (NULL);
-	if (!l->next && !f)
-		return (l);
-	if (!l->next->next && f)
-		return (l);
-	while (f ? l->next->next : l->next)
-		l = l->next;
-	return (l);
-}
-
 int	parse_jobspec(char *jspec)
 {
 	int spec;
 	t_job *monitored;
 
 	if (!jspec)
-		return (jobslist_top(sh_config_getter(NULL)->monitored, 0));
+		return (jobslist_size(sh_config_getter(NULL)->monitored));
 	if (jspec[0] != '%' || ft_strlen(jspec) < 2)
 		return (0);
 	if (jspec[1] == '%' || jspec[1] == '+')
-		return (jobslist_top(sh_config_getter(NULL)->monitored, 0));
+		return (jobslist_size(sh_config_getter(NULL)->monitored));
 	if (jspec[2] == '-')
-		return (jobslist_top(sh_config_getter(NULL)->monitored, 1));
+		return (jobslist_size(sh_config_getter(NULL)->monitored) - 1);
 	if (ft_digitscount((spec = ft_atoi(jspec + 1))) == ft_strlen(jspec + 1))
 		return (ft_atoi(jspec + 1));
 	monitored = sh_config_getter(NULL)->monitored;
-	jspec = 1;
+	spec = 1;
 	while (monitored)
 	{
 		if (!ft_strncmp(monitored->job_string, jspec + 1, ft_strlen(jspec + 1)))
-			return (jspec);
-		jspec++;
+			return (spec);
+		spec++;
 	}
 	return(0);
 }
@@ -90,5 +104,16 @@ int	jobcontrol_ground_manager(char **arg)
 
 int ft_jobs(char **arg)
 {
+	t_job *j;
 
+	printf("yo khoti mer7ba bikom fmy youtube channel;ll\n");
+	j = sh_config_getter(NULL)->monitored;
+	while (j)
+	{
+		printf("%d -- %s\n", j->gid, j->processes->arg[0]);
+		printf("jobs salina\n");
+		j = j->next;
+	}
+	printf("yo khoti mer7ba bikom fmy youtube channel;ll\n");
+	return (0);
 }
