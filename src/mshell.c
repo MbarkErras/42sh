@@ -54,8 +54,8 @@ void			signal_handler(int sig)
 	if (F_GET(sh->flags, F_CHILDPROC))
 		return ;
 	rd = rd_config_getter(NULL);
-	sh->rd = init_read(PRMPT(F_GET(sh->flags, F_LASTRET)),
-	sh->hist, sh->cboard, &(sh->in));
+	sh->rd = init_read(/*PRMPT(F_GET(sh->flags, F_LASTRET))*/"s> ",
+			sh->hist, sh->cboard, &(sh->in));
 }
 
 void			save_io(void)
@@ -65,15 +65,35 @@ void			save_io(void)
 	dup2(2, STDERR_DUP);
 }
 
+void	assert_foreground(t_shell_config *sh)
+{
+	while (tcgetpgrp (0) != (sh->shell_pgid = getpgrp ()))
+		kill (- sh->shell_pgid, SIGTTIN);
+}
+
 static void		init_shell_config(t_shell_config *sh)
 {
 	extern char	**environ;
 
+	assert_foreground(sh);
+	signal (SIGINT, SIG_IGN);
+	signal (SIGQUIT, SIG_IGN);
+	signal (SIGTSTP, SIG_IGN);
+	signal (SIGTTIN, SIG_IGN);
+	signal (SIGTTOU, SIG_IGN);
+	signal (SIGCHLD, SIG_IGN);
+	sh->shell_pgid = getpid();
+	if (setpgid(sh->shell_pgid, sh->shell_pgid) < 0)
+	{
+		perror ("Couldn't put the shell in its own process group");
+		exit (1);
+	}
+	tcsetpgrp (0, sh->shell_pgid);
 	if ((int)(sh->env = array_to_t_string(environ)) == -1)
 		exit_cleanup(EXIT_FAILURE, F_EXE);
 	sh->hist = NULL;
+	F_SET(sh->flags, F_INTERACTIVE);
 	sh->cboard = ft_strnew(0);
-	sh->flags = 1;
 	signal(SIGINT, signal_handler);
 	sh_config_getter(sh);
 	init_terminal();
@@ -87,21 +107,17 @@ int				main(void)
 	init_shell_config(&sh);
 	while (1)
 	{
-		read_cline(PRMPT(F_GET(sh.flags, F_LASTRET)), &sh);
+		read_cline("r> "/*PRMPT(F_GET(sh.flags, F_LASTRET))*/, &sh);
 		if (ft_strlen(*rd_config_getter(NULL)->in))
 		{
 			list_push_back(&sh.hist, list_create_node(t_hist_construct((t_hist){ft_strdup(*rd_config_getter(NULL)->in), time(NULL), NULL, 2}), sizeof(t_hist)));
 			read_history_resetting();
 		}
-		if (ft_strequ(sh.in, "exit"))
-		{
-			system("reset");
-			exit(0);
-		}
-		char **temp = malloc(sizeof(char **) * 2);
-		temp[1] = NULL;
-		b_history(temp);
 		if (!(sh.jobs = parse(&sh)))
-			continue ;
+		{
+			printf("null parsing\n");
+		}
+		execute_jobs(sh.jobs);
+		//add monitored jobs to monitored..
 	}
 }

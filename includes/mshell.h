@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/27 21:49:12 by merras            #+#    #+#             */
-/*   Updated: 2019/09/14 22:21:44 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/09/20 05:04:31 by merras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,7 @@ typedef struct	s_process
 typedef struct	s_job
 {
 	t_process			*processes;
+	char				*job_string;
 	int					return_val;
 	int					flag;
 	/*
@@ -111,9 +112,11 @@ typedef struct	s_shell_config
 	t_list			*hist;
 	t_string		*env;
 	t_job			*jobs;
+	t_job			*monitored; //a list contain monitored jobs
 	char			*in;
 	char			*cboard;
 	int				flags;
+	pid_t			shell_pgid;
 
 	struct termios	saved_attr;
 }				t_shell_config;

@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/27 16:25:14 by merras            #+#    #+#             */
-/*   Updated: 2019/09/14 19:59:18 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/09/15 19:20:20 by merras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -317,7 +317,6 @@ t_job		*parse(t_shell_config *sh)
 	mark_operators(line);
 	if (check_syntax_errors(line))
 		return (NULL);
-	printf("line after error checking: %s\n", line);
 	apply_globbing(&line);
 	cmd_chain = ft_strsplit(line, SEMI_COL);
 	int	j;

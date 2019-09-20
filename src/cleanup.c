@@ -6,7 +6,7 @@
 /*   By: merras <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/29 09:46:51 by merras            #+#    #+#             */
-/*   Updated: 2019/08/04 00:01:30 by merras           ###   ########.fr       */
+/*   Updated: 2019/09/20 02:22:02 by merras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,5 +21,6 @@ void	exit_cleanup(int exit_status, int err)
 		ft_perror(EXEC_NAME, NULL, err);
 	ft_putchar('\n');
 	free(env_converter());
+	reset_input_mode();
 	exit(exit_status);
 }
