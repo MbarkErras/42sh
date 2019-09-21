@@ -65,11 +65,54 @@ void			save_io(void)
 	dup2(2, STDERR_DUP);
 }
 
+t_variable	*create_variable(char *value, int flag)
+{
+	t_variable *variable;
+
+	if (!value)
+		return (NULL);
+	if (!(variable = malloc(sizeof(t_variable))))
+		return (NULL);
+	variable->value = value;
+	variable->flag = flag;
+	return (variable);
+}
+
+t_list	*array_to_list(char **array)
+{
+	t_list	*local_variables;
+	t_variable *variable;
+
+	local_variables = NULL;
+	if (!array)
+		return ((t_list *)-1);
+	while (*array)
+	{
+		if (!(variable = create_variable(ft_strdup(*array), 1)))
+			return ((t_list *)-1);
+		list_push_back(&local_variables,
+					list_create_node(variable, sizeof(t_variable)));
+		array++;
+	}
+	return (local_variables);
+}
+
+void	delete_variable(void *variable)
+{
+	t_variable *v;
+
+	if (!variable)
+		return ;
+	v = (t_variable *)variable;
+	free(v->value);
+	free(v);
+}
+
 static void		init_shell_config(t_shell_config *sh)
 {
 	extern char	**environ;
 
-	if ((int)(sh->env = array_to_t_string(environ)) == -1)
+	if ((int)(sh->variables = array_to_list(environ)) == -1)
 		exit_cleanup(EXIT_FAILURE, F_EXE);
 	sh->hist = NULL;
 	sh->cboard = ft_strnew(0);
