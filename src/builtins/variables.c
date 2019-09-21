@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   variables.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: merras <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/03 21:33:00 by merras            #+#    #+#             */
-/*   Updated: 2019/09/21 16:11:00 by mmostafa         ###   ########.fr       */
+/*   Updated: 2019/09/21 20:17:35 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,11 +44,11 @@ int	ft_unset(char **arg)
 		variables = sh_config_getter(NULL)->variables;
 		while (variables)
 		{
-			if (ft_strstr(((t_variable *)variables->content)->value, *arg) &&
-					((t_variable *)variables->content)->value[ft_strlen(*arg) == '='])
-				list_delete_node(sh_config_getter(NULL)->variables,
-						&variables,
-						delete_variable);
+			// if (ft_strstr(((t_variable *)variables->content)->value, *arg) &&
+			// 		((t_variable *)variables->content)->value[ft_strlen(*arg) == '='])
+			// 	list_delete_node(sh_config_getter(NULL)->variables,
+			// 			&variables,
+			// 			delete_variable);
 			variables = variables->next;
 		}
 		arg++;

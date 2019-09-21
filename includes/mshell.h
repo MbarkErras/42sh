@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/27 21:49:12 by merras            #+#    #+#             */
-/*   Updated: 2019/09/21 20:14:46 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/09/21 20:16:46 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -418,4 +418,5 @@ char	*file_reader(int fd);
  * /
 
  void	*delete_variable(void *v);
+*/
 #endif
