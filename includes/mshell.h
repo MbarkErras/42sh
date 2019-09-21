@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/27 21:49:12 by merras            #+#    #+#             */
-/*   Updated: 2019/09/20 11:32:44 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/09/21 18:56:11 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,31 +79,23 @@ typedef struct	s_process
 	struct s_process	*next;
 }				t_process;
 
-typedef struct	s_pr_group
+typedef struct	s_job
 {
 	t_process			*processes;
+	char				*command;
 	int					return_val;
 	int					flag;
 /*
 **	if job is meant for background F_BACKGROUND
 **	should be set in jcflags
 */
-	// pid_t				gid; //should be initialized to 0
-	// int					jcflags; //should be initialized to 0
+	pid_t			gid;
+	int				jcflags; //should be initialized to 0
+							 //should be initialized to 0
 								//F_BACKGROUND should be set if
 								//the job is meant for background
-
-	struct s_pr_group	*next;
-}				t_pr_group;
-
-typedef	struct		s_job
-{
-	t_pr_group		*proc_gr;
-	pid_t			gid;
-	int				jcflags;
 	struct s_job	*next;
-}					t_job;
-
+}				t_job;
 
 typedef struct	s_hist
 {
@@ -315,9 +307,12 @@ t_job			*parse(t_shell_config *sh);
 void			dquotes_checker(char **line, char *dq, int *i, int *j);
 void			squotes_checker(char **line, char *q, int *i);
 int				check_syntax_errors(char *line);
-t_job			*get_jobs(char **cmd_chain);
-t_pr_group		*get_parse_list(char *cmd_chain);
-t_process		*get_process_list(char *cmd_chain);
+t_job			*get_jobs(char **cmd_chain, int	bg);
+t_process		*get_process_list(char *cmd_chain, char type);
+void			append(void **h, void **c, void **t, char type);
+int				set_flag(void *curr, int flag, char type);
+char			*skip_operators(char type, char *token, int *start, int *j);
+void			get_list_node(char type, void **curr, char *str);
 char			*check_redirections(char *str, t_process *cmd);
 char			escape_char(char c);
 int				get_redir_fds(t_redir *curr, char *str, int *i);
