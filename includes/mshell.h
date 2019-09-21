@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/27 21:49:12 by merras            #+#    #+#             */
-/*   Updated: 2019/09/21 18:56:11 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/09/21 20:14:46 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,11 +105,18 @@ typedef struct	s_hist
 	int			flags;
 }				t_hist;
 
+typedef struct	s_variable
+{
+	char	*value;
+	int		flag; //flag to indicate if variable is exported or not
+}				t_variable;
+
 typedef struct	s_shell_config
 {
 	t_read			rd;
 	t_list			*hist;
 	t_string		*env;
+	t_list			*variables;
 	t_job		*jobs;
 	char			*in;
 	char			*cboard;
@@ -406,4 +413,9 @@ int     history_read(char **in, char c);
 void	setter(char *set, char *elements);
 char	*file_reader(int fd);
 
+/*
+ * ** LOCAL VARIABLES
+ * /
+
+ void	*delete_variable(void *v);
 #endif
