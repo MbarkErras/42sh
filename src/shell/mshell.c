@@ -114,6 +114,7 @@ static void		init_shell_config(t_shell_config *sh)
 
 	if ((int)(sh->variables = array_to_list(environ)) == -1)
 		exit_cleanup(EXIT_FAILURE, F_EXE);
+	printf("YALLAH JINA\n");
 	sh->hist = NULL;
 	sh->cboard = ft_strnew(0);
 	sh->flags = 1;
