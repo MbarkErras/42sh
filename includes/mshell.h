@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/27 21:49:12 by merras            #+#    #+#             */
-/*   Updated: 2019/09/20 19:20:09 by merras           ###   ########.fr       */
+/*   Updated: 2019/09/21 15:30:24 by merras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -377,7 +377,7 @@ void			b_exit(char **in);
 
 int				execute_jobs(t_job *jobs);
 int				execute_job(t_job *job);
-int				execute_process(t_process *process, pid_t gid, int fg);
+int				execute_process(char *path, t_process *process, pid_t gid, int fg);
 void	monitor_job(t_job *j);
 int		job_is_stopped(t_process *process);
 void	put_job_in_foreground(t_job *j, int cont);

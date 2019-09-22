@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/07 19:13:47 by merras            #+#    #+#             */
-/*   Updated: 2019/09/20 19:20:04 by merras           ###   ########.fr       */
+/*   Updated: 2019/09/21 15:30:30 by merras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,14 +171,12 @@ void	put_job_in_background(t_job *job , int cont)
 			perror ("kill (SIGCONT)");
 }
 
-int		execute_process(t_process *process, pid_t gid, int bg)
+int		execute_process(char *path, t_process *process, pid_t gid, int bg)
 {
 	pid_t	pid;
-	char	*path;
 
 	printf("executing the professional cici\n");
-	if (!(path = find_exec(process->arg[0])))
-		return (ft_perror(EXEC_NAME, process->arg[0], N_EXE));
+
 	if (F_GET(sh_config_getter(NULL)->flags, F_INTERACTIVE))
 	{
 		pid = getpid();
@@ -197,7 +195,6 @@ int		execute_process(t_process *process, pid_t gid, int bg)
 		signal (SIGTTOU, SIG_DFL);
 		signal (SIGCHLD, SIG_DFL);
 	}
-	path = find_exec(process->arg[0]);
 	if (execve(path, process->arg, env_converter()) == -1)
 		return (ft_perror(EXEC_NAME, NULL, F_EXE));
 	exit(EXIT_FAILURE);
@@ -206,6 +203,7 @@ int		execute_process(t_process *process, pid_t gid, int bg)
 int		execute_job(t_job *job)
 {
 	t_process *process;
+	char	*path;
 	pid_t		pid;
 
 	process = job->processes;
@@ -219,9 +217,11 @@ int		execute_job(t_job *job)
 			process = process->next;
 			continue ;
 		}
+		if (!(path = find_exec(process->arg[0])))
+			return (ft_perror(EXEC_NAME, process->arg[0], N_EXE));
 		pid = fork();
 		if (pid == 0)
-			execute_process(process, job->gid, F_GET(job->jcflags, F_BACKGROUND));
+			execute_process(path, process, job->gid, F_GET(job->jcflags, F_BACKGROUND));
 		else if (pid < 0)
 			exit (ft_perror(EXEC_NAME, NULL, F_FRK));
 		process->pid = pid;
