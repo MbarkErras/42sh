@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/27 21:49:12 by merras            #+#    #+#             */
-/*   Updated: 2019/09/21 19:35:29 by mmostafa         ###   ########.fr       */
+/*   Updated: 2019/09/22 15:03:28 by mmostafa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,7 +123,7 @@ typedef struct	s_shell_config
 {
 	t_read			rd;
 	t_list			*hist;
-	t_string		*env;
+//	t_string		*env;
 	t_list			*variables;
 	t_job		*jobs;
 	char			*in;

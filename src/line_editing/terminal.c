@@ -6,7 +6,7 @@
 /*   By: merras <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/27 22:46:55 by merras            #+#    #+#             */
-/*   Updated: 2019/08/17 17:55:11 by merras           ###   ########.fr       */
+/*   Updated: 2019/09/21 19:50:53 by mmostafa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,9 @@ static void	init_terminal_data(void)
 	char	*termtype;
 	int		success;
 
+	printf("MAZAL\n");
 	termtype = read_env("TERM");
+	printf("ALLO\n");
 	if (termtype == 0)
 	{
 		ft_perror(EXEC_NAME, NULL, N_TRM);

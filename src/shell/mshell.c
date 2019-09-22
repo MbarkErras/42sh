@@ -22,24 +22,32 @@ char			**env_converter(void)
 {
 	static char **array = NULL;
 	int			i;
-	t_string	*list;
+	t_list		*list;
 
-	list = sh_config_getter(NULL)->env;
+	list = sh_config_getter(NULL)->variables;
 	if (!list)
 		return (NULL);
 	if (array)
 		free(array);
+	printf("HHHNA 11111\n");
 	if (!(array = (char **)malloc(sizeof(char *) *
-					(t_string_length(list) + 1))))
+					(list_size(list) + 1))))
 		exit_cleanup(EXIT_FAILURE, F_EXE);
+	printf("HHHNA 2222222\n");
 	i = 0;
 	while (list)
 	{
-		array[i] = list->string;
+		array[i] = ((t_variable *)list->content)->value;
 		list = list->next;
 		i++;
 	}
 	array[i] = NULL;
+	i = 0;
+	while (array[i])
+	{
+		printf("%s\n",array[i]);
+		i++;
+	}
 	return (array);
 }
 
@@ -114,7 +122,6 @@ static void		init_shell_config(t_shell_config *sh)
 
 	if ((int)(sh->variables = array_to_list(environ)) == -1)
 		exit_cleanup(EXIT_FAILURE, F_EXE);
-	printf("YALLAH JINA\n");
 	sh->hist = NULL;
 	sh->cboard = ft_strnew(0);
 	sh->flags = 1;

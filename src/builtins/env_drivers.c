@@ -6,7 +6,7 @@
 /*   By: merras <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/09 18:36:04 by merras            #+#    #+#             */
-/*   Updated: 2019/08/03 18:05:10 by merras           ###   ########.fr       */
+/*   Updated: 2019/09/22 15:57:58 by mmostafa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void	update_env_value(char *entry, t_string *prev, t_string *en)
 
 void	delete_env_value(t_string *prev, t_string *en)
 {
-	if (!(en == sh_config_getter(NULL)->env))
+	if (!(en == sh_config_getter(NULL)->variables))
 	{
 		if (en->next)
 			prev->next = en->next;
@@ -51,10 +51,10 @@ void	add_env_value(char *entry, t_string *prev)
 
 void	update_env(char *key, char *value, int flag)
 {
-	t_string	*temp;
-	t_string	*en;
+	t_list		*temp;
+	t_list		*en;
 
-	en = sh_config_getter(NULL)->env;
+	en = sh_config_getter(NULL)->variables;
 	temp = NULL;
 	while (en)
 	{
@@ -82,7 +82,9 @@ char	*read_env(char *key)
 	char	**env;
 	char	*value;
 
+	printf("HNA !!\n");
 	env = env_converter();
+	printf("MACHI HNA !!\n");
 	if (!env || !key)
 		return (NULL);
 	while (*env)
