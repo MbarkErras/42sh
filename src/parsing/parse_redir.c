@@ -6,13 +6,13 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/05 04:19:50 by yoyassin          #+#    #+#             */
-/*   Updated: 2019/09/16 18:50:01 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/09/21 18:58:11 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/mshell.h"
+#include "mshell.h"
 
-static void		append(t_redir **h, t_redir **c, t_redir **t)
+static void		append_redir(t_redir **h, t_redir **c, t_redir **t)
 {
 	if (!*h)
 	{
@@ -40,7 +40,7 @@ static t_redir	*get_node(void)
 	return (node);
 }
 
-void		get_redir_type(t_redir *curr, char *str, int i)
+void			get_redir_type(t_redir *curr, char *str, int i)
 {
 	if (str[i] == OUT_RED_OP || str[i] == IN_RED_OP)
 		curr->type = (str[i] == OUT_RED_OP) ? O_CREAT : O_RDONLY;
@@ -58,7 +58,7 @@ void		get_redir_type(t_redir *curr, char *str, int i)
 		curr->type = FD_AGGR;
 }
 
-int		get_redir_info(t_redir *curr, char *str, int *i)
+int			get_redir_info(t_redir *curr, char *str, int *i)
 {
 	curr->dst_fd = 0;
 	get_redir_type(curr, str, *i);
@@ -71,7 +71,7 @@ int		get_redir_info(t_redir *curr, char *str, int *i)
 	return (1);
 }
 
-char	*check_redirections(char *str, t_process *cmd)
+char		*check_redirections(char *str, t_process *cmd)
 {
 	int		i;
 	t_redir	*curr;
@@ -88,7 +88,7 @@ char	*check_redirections(char *str, t_process *cmd)
 		if (IS_REDIRECTION)
 		{
 			curr = get_node();
-			append(&head, &curr, &tail);
+			append_redir(&head, &curr, &tail);
 			if (!get_redir_info(curr, str, &i))
 				continue ;
 		}

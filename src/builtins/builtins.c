@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/26 16:45:13 by merras            #+#    #+#             */
-/*   Updated: 2019/09/22 15:55:13 by mmostafa         ###   ########.fr       */
+/*   Updated: 2019/09/22 22:11:58 by mmostafa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ int		b_senv(char **in, int p)
 	return (0);
 }
 
+/*
 t_list	*list_copy(t_list *origin)
 {
 	t_list	*copy;
@@ -91,6 +92,35 @@ t_list	*list_copy(t_list *origin)
 		head2 = head2->next;
 	}
 	return (head);
+}
+*/
+
+t_list	*list_copy(t_list *list)
+{
+	t_list *copy;
+	t_list *i;
+
+	if (!list)
+		return (NULL);
+	copy = NULL;
+	i = NULL;
+	while (list)
+	{
+		if (!i)
+		{
+			i = (t_list *)malloc(sizeof(t_list));
+			i->content = create_variable(((t_variable *)list->content)->value, ((t_variable *)list->content)->flag);
+			copy = i;
+		}
+		else
+		{
+			i->next = (t_list *)malloc(sizeof(t_list));
+			i->next->content = create_variable(((t_variable *)list->content)->value, ((t_variable *)list->content)->flag);
+			i = i->next;
+		}
+		list = list->next;
+	}
+	return (copy);
 }
 
 void	b_env_arg(char **in)

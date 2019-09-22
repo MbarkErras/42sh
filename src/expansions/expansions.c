@@ -6,13 +6,13 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/18 20:48:11 by yoyassin          #+#    #+#             */
-/*   Updated: 2019/09/20 11:49:33 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/09/21 15:30:25 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/mshell.h"
 
-char	*get_esc_char(char *str, char c);
+char			*get_esc_char(char *str, char c);
 
 void			apply_globbing(char **line)
 {
@@ -36,7 +36,7 @@ void			apply_globbing(char **line)
 	i = -1;
 	while ((*line)[++i])
 	{
-		if (!q && (*line)[i] == '"' && (*line[i - 1] != UQ_ESCAPE))
+		if (!q && (*line)[i] == '"' && (*line)[i - 1] != UQ_ESCAPE)
 			dq = !dq;
 		else if (!dq && (*line)[i] == '\'' && (*line)[i - 1] != UQ_ESCAPE)
 			q = !q;

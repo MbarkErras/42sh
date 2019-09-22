@@ -18,6 +18,20 @@ t_shell_config	*sh_config_getter(t_shell_config *sh_set)
 	return (sh_get);
 }
 
+int				env_variables_counter(t_list *v)
+{
+	int i;
+
+	i = 0;
+	while (v)
+	{
+		if (((t_variable *)v->content)->flag)
+			i++;
+		v = v->next;
+	}
+	return (i);
+}
+
 char			**env_converter(void)
 {
 	static char **array = NULL;
@@ -29,25 +43,17 @@ char			**env_converter(void)
 		return (NULL);
 	if (array)
 		free(array);
-	printf("HHHNA 11111\n");
 	if (!(array = (char **)malloc(sizeof(char *) *
-					(list_size(list) + 1))))
+					(env_variables_counter(list) + 1))))
 		exit_cleanup(EXIT_FAILURE, F_EXE);
-	printf("HHHNA 2222222\n");
-	i = 0;
+	i = -1;
 	while (list)
 	{
-		array[i] = ((t_variable *)list->content)->value;
+		if (((t_variable *)list->content)->flag)
+			array[++i] = ((t_variable *)list->content)->value;
 		list = list->next;
-		i++;
 	}
 	array[i] = NULL;
-	i = 0;
-	while (array[i])
-	{
-		printf("%s\n",array[i]);
-		i++;
-	}
 	return (array);
 }
 
@@ -120,7 +126,7 @@ static void		init_shell_config(t_shell_config *sh)
 {
 	extern char	**environ;
 
-	if ((int)(sh->variables = array_to_list(environ)) == -1)
+	if ((int)(sh->env = array_to_t_string(environ)) == -1)
 		exit_cleanup(EXIT_FAILURE, F_EXE);
 	sh->hist = NULL;
 	sh->cboard = ft_strnew(0);

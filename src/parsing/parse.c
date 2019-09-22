@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: yoyassin <yoyassin@1337.ma>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/27 16:25:14 by merras            #+#    #+#             */
-/*   Updated: 2019/09/20 12:05:45 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/09/21 23:25:42 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,41 +34,67 @@ int		ft_isspace(int c)
 
 void		print_parsing_res(t_job *head)
 {
-	int a = 1;
-	int	b = 1;
+	int	p = 1;
+	int	bj = 1;
 	int	j = 1;
 
 	while (head)
 	{
-		printf("job: %d\n", j);
-		a = 1;
-		while (head->proc_gr)
+		if (head->flag == BG)
 		{
-			printf("pr_grp: %d\n", a);
-			b = 1;
-			while (head->proc_gr->processes)
+			printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
+			printf("background job processes: %d\n", bj);
+			printf("job cmd: %s\n", head->command);
+			p = 1;
+			while (head->processes)
 			{
-				printf("process nb: %d\n", b);
-				while (*head->proc_gr->processes->arg)
+				printf("process: %d\n", p);
+				while (*head->processes->arg)
 				{
-					printf("\np_arg: %s\n", *head->proc_gr->processes->arg);
-					while (head->proc_gr->processes->redir)
-					{
-						printf("Redir:\n type: %d, src_fd: %d, dst_fd: %d, file: %s\n",
-						head->proc_gr->processes->redir->type, head->proc_gr->processes->redir->src_fd, head->proc_gr->processes->redir->dst_fd, head->proc_gr->processes->redir->file);
-						head->proc_gr->processes->redir = head->proc_gr->processes->redir->next;
-					}
-					head->proc_gr->processes->arg++;
+					printf("\targ: %s\n", *head->processes->arg);
+					head->processes->arg++;
 				}
-				head->proc_gr->processes = head->proc_gr->processes->next;
-				b++;
+				printf("redirections:\n");
+				while (head->processes->redir)
+				{
+					printf("\ttype: %d\n", head->processes->redir->type);
+					head->processes->redir = head->processes->redir->next;
+				}
+				printf("flag: %d\n", head->processes->flag);
+				head->processes = head->processes->next;
+				p++;
 			}
-			printf("FLAG: %d\n", head->proc_gr->flag);
-			a++;
-			head->proc_gr = head->proc_gr->next;
+			bj++;
+			printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n");
 		}
-		printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
-		j++;
+		else
+		{
+			printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
+			printf("foreground job processes: %d\n", j);
+			printf("job cmd: %s\n", head->command);
+			p = 1;
+			while (head->processes)
+			{
+				printf("process: %d\n", p);
+				while (*head->processes->arg)
+				{
+					printf("\targ: %s\n", *head->processes->arg);
+					head->processes->arg++;
+				}
+				printf("redirections:\n");
+				while (head->processes->redir)
+				{
+					printf("\ttype: %d\n", head->processes->redir->type);
+					head->processes->redir = head->processes->redir->next;
+				}
+				printf("flag: %d\n", head->processes->flag);
+				head->processes = head->processes->next;
+				p++;
+			}
+			printf("flag: %d\n", head->flag);
+			j++;
+			printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n");
+		}
 		head = head->next;
 	}
 }
@@ -178,7 +204,7 @@ char		*pre_parse(t_shell_config *sh)
 	dq = 0;
 	i = 0;
 	j = 0;
-	line = ft_strdup(sh->in);
+	line = ft_strdup(*(rd_config_getter(NULL)->in));
 	while (line[i])
 	{
 		if (!q && line[i] == '"' && line[i - 1] != UQ_ESCAPE)
@@ -192,6 +218,22 @@ char		*pre_parse(t_shell_config *sh)
 	return (line);
 }
 
+int			get_bg_jobs(char *line)
+{
+	int	i;
+	int	bg;
+
+	i = 0;
+	bg = 0;
+	while (line[i])
+	{
+		if (line[i] == BG)
+			bg++;
+		i++;
+	}
+	return (bg);
+}
+
 t_job		*parse(t_shell_config *sh)
 {
 	char		**cmd_chain;
@@ -200,21 +242,15 @@ t_job		*parse(t_shell_config *sh)
 
 	head = NULL;
 	line = pre_parse(sh);
-	sh->in = ft_strdup(line);
+	*(rd_config_getter(NULL)->in) = ft_strdup(line);
 	mark_operators(line);
 	if (check_syntax_errors(line))
 		return (NULL);
 	apply_globbing(&line);
 	cmd_chain = ft_strsplit(line, SEMI_COL);
-	head = get_jobs(cmd_chain);
+	// printf("bg: %d\n", get_bg_jobs(line));
+	head = get_jobs(cmd_chain, get_bg_jobs(line));
 	t_job *tmp = head;
 	print_parsing_res(tmp);
 	return (head);
 }
-
-	// while (head->processes->redir)
-	// {
-	// 	printf("Redir:\n type: %d, src_fd: %d, dst_fd: %d, file: %s\n",
-	// 	head->processes->redir->type, head->processes->redir->src_fd, head->processes->redir->dst_fd, head->processes->redir->file);
-	// 	head->processes->redir = head->processes->redir->next;
-	// }
