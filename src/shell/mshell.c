@@ -126,7 +126,7 @@ static void		init_shell_config(t_shell_config *sh)
 {
 	extern char	**environ;
 
-	if ((int)(sh->env = array_to_t_string(environ)) == -1)
+	if ((int)(sh->variables = array_to_list(environ)) == -1)
 		exit_cleanup(EXIT_FAILURE, F_EXE);
 	sh->hist = NULL;
 	sh->cboard = ft_strnew(0);

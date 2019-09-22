@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/27 21:49:12 by merras            #+#    #+#             */
-/*   Updated: 2019/09/22 20:13:38 by mmostafa         ###   ########.fr       */
+/*   Updated: 2019/09/22 22:41:17 by merras           ###   ########.fr       */
 /*   Updated: 2019/09/21 20:16:46 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
@@ -421,5 +421,6 @@ char	*file_reader(int fd);
 int		ft_export(char **arg);
 int		ft_set();
 //int		ft_unset(char **arg);
- void	*delete_variable(void *v);
+ void	delete_variable(void *v);
+ t_variable *create_variable(char *value, int flag);
 #endif
