@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/27 21:49:12 by merras            #+#    #+#             */
-/*   Updated: 2019/09/22 22:46:13 by merras           ###   ########.fr       */
+/*   Updated: 2019/09/23 22:49:20 by mmostafa         ###   ########.fr       */
 /*   Updated: 2019/09/21 20:16:46 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
@@ -400,7 +400,7 @@ void			b_exit(char **in);
 # define F_CHANGED 0
 # define F_NEW 1
 
-# define POSI(x, s) x < 0 ? size - x : x
+# define POSI(x, s) x < 0 ? s - x : x
 
 t_hist	*t_hist_construct(t_hist entry);
 void	ack_history_change(t_list *node);
@@ -423,4 +423,10 @@ int		ft_set();
 //int		ft_unset(char **arg);
  void	delete_variable(void *v);
  t_variable *create_variable(char *value, int flag);
+
+ /*
+  * history
+  */
+ char    *result_giving(char *to_search, t_list *his);
+ char    *search_in_history(t_list *head, int to_find);
 #endif

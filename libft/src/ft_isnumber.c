@@ -11,7 +11,7 @@ int	ft_isnumber(char *string)
 	{
 		if (!ft_isdigit(string[i]))
 		{
-			if (i == 0 || string[i] == '-')
+			if (i == 0 && string[i] == '-')
 				continue;
 			return (0);
 		}
