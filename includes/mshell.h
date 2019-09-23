@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/27 21:49:12 by merras            #+#    #+#             */
-/*   Updated: 2019/09/21 20:16:46 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/09/23 13:34:36 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -325,9 +325,9 @@ char			escape_char(char c);
 int				get_redir_fds(t_redir *curr, char *str, int *i);
 void			get_redir_file(t_redir *curr, char *str, int *i);
 char			*get_heredoc(char *str, int *i, int *hd_fd);
-void			apply_globbing(char **line);
+void			check_wildcard_c(char **line);
 void			apply_expansions(char **args);
-int				apply_glob_expansion(char *gl_pattern, char **args);
+int				apply_glob_expansion(char **line, char *gl_pattern, int start, int i);
 // int				execute_command_line(t_job *commands);
 ///
 ///

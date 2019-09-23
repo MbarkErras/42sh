@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/27 16:25:14 by merras            #+#    #+#             */
-/*   Updated: 2019/09/21 18:59:22 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/09/23 22:21:21 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,14 +134,17 @@ int				sc_operator(char *line, int i)
 {
 	if (line[i] == ';')
 		return ((line[i] = SEMI_COL));
-	else if (line[i - 1] != UQ_ESCAPE && line[i] == 92)
+	else if (line[i] == 92 && line[(i - 1 > 0) ? i - 1 : 0] != UQ_ESCAPE)
 		return ((line[i] = UQ_ESCAPE));
 	else if (line[i] == '|' && line[i + 1] != '|')
 		return ((line[i] = PIPE));
 	else if ((line[i] == '>' || line[i] == '<')
 	&& (line[i + 1] != '>' && line[i + 1] != '<'))
 		return ((line[i] = (line[i] == '>' ? OUT_RED_OP : IN_RED_OP)));
-	else if (line[i] == '&' && line[i + 1] != '&')
+	else if (line[i + 1] != '>' && line[i + 1] != '<' &&
+	IS_REDIR_OP(i + 1, _AND, _NEQ) &&
+	IS_REDIR_OP((i - 1 > 0) ? i - 1 : 0, _AND, _NEQ) &&
+	line[i] == '&' && line[i + 1] != '&')
 		return ((line[i] = BG));
 	return (0);
 }
@@ -157,18 +160,20 @@ void			mark_operators(char *line)
 	i = -1;
 	while (line[++i])
 	{
-		if (!q && line[i] == '"' && line[i - 1] != UQ_ESCAPE)
+		if (!q && line[i] == '"' && line[(i - 1 > 0) ? i - 1 : 0] != UQ_ESCAPE)
 			dq = !dq;
-		else if (!dq && line[i] == '\'' && line[i - 1] != UQ_ESCAPE)
+		else if (!dq && line[i] == '\'' &&
+		line[(i - 1 > 0) ? i - 1 : 0] != UQ_ESCAPE)
 			q = !q;
-		if (!q && !dq && line[i - 1] != UQ_ESCAPE)
+		if (!q && !dq && line[(i - 1 > 0) ? i - 1 : 0] != UQ_ESCAPE)
 		{
 			if (sc_operator(line, i) || dc_operator(line, i))
 				continue ;
 			else if (ft_isspace(line[i]))
 				line[i] = BLANK;
 		}
-		else if (dq && line[i - 1] != Q_ESCAPE && line[i] == 92)
+		else if (dq && line[(i - 1 > 0) ? i - 1 : 0] != Q_ESCAPE
+		&& line[i] == 92)
 			line[i] = Q_ESCAPE;
 	}
 }
@@ -205,11 +210,13 @@ char		*pre_parse(t_shell_config *sh)
 	line = ft_strdup(sh->in);
 	while (line[i])
 	{
-		if (!q && line[i] == '"' && line[i - 1] != UQ_ESCAPE)
+		if (!q && line[i] == '"' && line[(i - 1 > 0) ? i - 1 : 0] != UQ_ESCAPE)
 			dquotes_checker(&line, &dq, &i, &j);
-		else if (!dq && line[i] == '\'' && line[i - 1] != UQ_ESCAPE)
+		else if (!dq && line[i] == '\'' &&
+		line[(i - 1 > 0) ? i - 1 : 0] != UQ_ESCAPE)
 			squotes_checker(&line, &q, &i);
-		else if (!q && !dq && line[i - 1] != UQ_ESCAPE && line[i] == 92)
+		else if (!q && !dq && line[i] == 92 &&
+		line[(i - 1 > 0) ? i - 1 : 0] != UQ_ESCAPE)
 			line[i] = UQ_ESCAPE;
 		i++;
 	}
@@ -244,9 +251,8 @@ t_job		*parse(t_shell_config *sh)
 	mark_operators(line);
 	if (check_syntax_errors(line))
 		return (NULL);
-	apply_globbing(&line);
+	check_wildcard_c(&line);
 	cmd_chain = ft_strsplit(line, SEMI_COL);
-	// printf("bg: %d\n", get_bg_jobs(line));
 	head = get_jobs(cmd_chain, get_bg_jobs(line));
 	t_job *tmp = head;
 	print_parsing_res(tmp);

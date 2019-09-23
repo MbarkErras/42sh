@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/21 18:46:41 by yoyassin          #+#    #+#             */
-/*   Updated: 2019/09/21 18:58:56 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/09/23 22:45:35 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ t_job				*build_jobs_lst(void **head, void **tail, char *cmd, int bg)
 	curr = NULL;
 	token = NULL;
 	j = 0;
+	old_j = 0;
 	while (cmd[j])
 	{
 		if (curr && (cmd[j] == BG || (!bg && (cmd[j] == AND || cmd[j] == OR))))
@@ -34,8 +35,11 @@ t_job				*build_jobs_lst(void **head, void **tail, char *cmd, int bg)
 			free(token);
 		}
 		else
-			get_list_node(bg ? 2 : 1, (void *)&curr,
-			(token = skip_operators(bg ? 2 : 1, cmd, &old_j, &j)));
+		{
+			token = skip_operators(bg ? 2 : 1, cmd, &old_j, &j);
+			if (is_not_blank(token, 0, ft_strlen(token)))
+				get_list_node(bg ? 2 : 1, (void *)&curr, token);
+		}
 	}
 	return (curr);
 }
