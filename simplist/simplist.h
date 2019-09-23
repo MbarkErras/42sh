@@ -25,7 +25,7 @@ void    list_push(t_list **head, t_list *node, int X);
 void    list_push_back(t_list **head, t_list *node);
 void    list_push_front(t_list **head, t_list *node);
 size_t	list_size(t_list *head);
-t_list  *list_find_node(t_list *head, int(*filter)(void *));
+t_list  *list_find_node(t_list *head, int(*filter)(void *, void *),void *p);
 t_list  **list_pointer_address(t_list **head, t_list *node);
 t_list  *list_indexed_node(t_list *head, size_t index);
 size_t  list_node_index(t_list *head, t_list *node);

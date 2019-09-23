@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/27 21:49:12 by merras            #+#    #+#             */
-/*   Updated: 2019/09/23 23:30:54 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/09/23 23:39:28 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -325,9 +325,9 @@ char			escape_char(char c);
 int				get_redir_fds(t_redir *curr, char *str, int *i);
 void			get_redir_file(t_redir *curr, char *str, int *i);
 char			*get_heredoc(char *str, int *i, int *hd_fd);
-void			check_wildcard_c(char **line);
+void			apply_globbing(char **line);
 void			apply_expansions(char **args);
-int				apply_glob_expansion(char **line, char *gl_pattern, int start, int i);
+int				apply_glob_expansion(char *gl_pattern, char **args);
 // int				execute_command_line(t_job *commands);
 ///
 ///
@@ -403,7 +403,7 @@ void			b_exit(char **in);
 # define F_CHANGED 0
 # define F_NEW 1
 
-# define POSI(x, s) x < 0 ? size - x : x
+# define POSI(x, s) x < 0 ? s + x : x
 
 t_hist	*t_hist_construct(t_hist entry);
 void	ack_history_change(t_list *node);
@@ -419,11 +419,11 @@ char	*file_reader(int fd);
 
 /*
  * ** LOCAL VARIABLES
-<<<<<<< HEAD
- */
-int		ft_export(char **arg);
-int		ft_set();
-//int		ft_unset(char **arg);
- void	delete_variable(void *v);
- _variable *create_variable(char *value, int flag);
+ t_variable *create_variable(char *value, int flag);
+
+ /*
+  * history
+  */
+ char    *result_giving(char *to_search, t_list *his);
+ char    *search_in_history(t_list *head, int to_find);
 #endif
