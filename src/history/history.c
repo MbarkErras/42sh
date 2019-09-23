@@ -6,7 +6,7 @@
 /*   By: merras <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/03 21:31:42 by merras            #+#    #+#             */
-/*   Updated: 2019/09/23 23:07:20 by mmostafa         ###   ########.fr       */
+/*   Updated: 2019/09/23 23:35:32 by mmostafa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,7 @@ int		word_search_filter(void *n, void *p)
 char    *result_giving(char *to_search, t_list *his)
 {
 	char    *his_cmd;
+	t_list *node;
 
 	if (to_search[0] != '!')
 		return (NULL);
@@ -75,9 +76,9 @@ char    *result_giving(char *to_search, t_list *his)
 		return (search_in_history(his, ft_atoi(his_cmd)));
 	else
 	{
-		return (((t_hist *)list_find_node(his, word_search_filter, his_cmd)->content)->value);
+		if ((node = list_find_node(his, word_search_filter, his_cmd)))
+			return (((t_hist *)node->content)->value);
 	}
-
 	return (NULL);
 }
 

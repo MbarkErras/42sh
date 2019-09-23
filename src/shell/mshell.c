@@ -150,6 +150,7 @@ int				main(void)
 			list_push_back(&sh.hist, list_create_node(t_hist_construct((t_hist){ft_strdup(*rd_config_getter(NULL)->in), time(NULL), NULL, 2}), sizeof(t_hist)));
 			//read_history_resetting();
 		}
+		printf("result: %s\n", result_giving(sh.in, sh.hist));
 		if (ft_strequ(sh.in, "exit"))
 		{
 			system("reset");
