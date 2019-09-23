@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/27 21:49:12 by merras            #+#    #+#             */
-/*   Updated: 2019/09/23 23:39:28 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/09/23 23:50:51 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -311,6 +311,7 @@ char			*delete_chars(char *str, int start, int size);
 
 char			*pre_parse(t_shell_config *sh);
 t_job			*parse(t_shell_config *sh);
+void			check_wildcard_c(char **line);
 void			dquotes_checker(char **line, char *dq, int *i, int *j);
 void			squotes_checker(char **line, char *q, int *i);
 int				check_syntax_errors(char *line);
@@ -419,10 +420,13 @@ char	*file_reader(int fd);
 
 /*
  * ** LOCAL VARIABLES
+ */
  t_variable *create_variable(char *value, int flag);
-
- /*
-  * history
+ int	ft_export(char **arg);
+ int 	ft_set();
+ void	delete_variable(void *p);
+ /* 
+ ** history
   */
  char    *result_giving(char *to_search, t_list *his);
  char    *search_in_history(t_list *head, int to_find);

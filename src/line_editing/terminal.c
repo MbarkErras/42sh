@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   terminal.h                                         :+:      :+:    :+:   */
+/*   terminal.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: merras <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/27 22:46:55 by merras            #+#    #+#             */
-/*   Updated: 2019/09/21 19:50:53 by mmostafa         ###   ########.fr       */
+/*   Updated: 2019/09/23 23:54:11 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,8 @@ static void	init_terminal_data(void)
 	char	*termtype;
 	int		success;
 
-	printf("MAZAL\n");
 	termtype = read_env("TERM");
-	printf("ALLO\n");
+	printf("%s\n", termtype);
 	if (termtype == 0)
 	{
 		ft_perror(EXEC_NAME, NULL, N_TRM);

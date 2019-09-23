@@ -46,12 +46,16 @@ char			**env_converter(void)
 	if (!(array = (char **)malloc(sizeof(char *) *
 					(env_variables_counter(list) + 1))))
 		exit_cleanup(EXIT_FAILURE, F_EXE);
-	i = -1;
+	i = 0;
 	while (list)
 	{
 		if (((t_variable *)list->content)->flag)
-			array[++i] = ((t_variable *)list->content)->value;
+		{
+			array[i] = ((t_variable *)list->content)->value;
+			i++;
+		}
 		list = list->next;
+
 	}
 	array[i] = NULL;
 	return (array);
