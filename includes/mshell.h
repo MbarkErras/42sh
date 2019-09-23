@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/27 21:49:12 by merras            #+#    #+#             */
-/*   Updated: 2019/09/23 22:53:51 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/09/23 23:30:54 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -339,6 +339,10 @@ int				ft_strpos(char *s1, char *s2);
 int				is_not_blank(char *line, int j, int i);
 
 /*
+****************************************************************
+*/
+
+/*
 ** EXPANSIONS
 */
 
@@ -421,5 +425,5 @@ int		ft_export(char **arg);
 int		ft_set();
 //int		ft_unset(char **arg);
  void	delete_variable(void *v);
- t_variable *create_variable(char *value, int flag);
+ _variable *create_variable(char *value, int flag);
 #endif
