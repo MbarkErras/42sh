@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/27 16:25:14 by merras            #+#    #+#             */
-/*   Updated: 2019/09/23 22:21:21 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/09/23 22:53:07 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ void		print_parsing_res(t_job *head)
 		{
 			printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
 			printf("background job processes: %d\n", bj);
+			printf("job cmd: %s\n", head->command);
 			p = 1;
 			while (head->processes)
 			{
@@ -70,6 +71,7 @@ void		print_parsing_res(t_job *head)
 		{
 			printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
 			printf("foreground job processes: %d\n", j);
+			printf("job cmd: %s\n", head->command);
 			p = 1;
 			while (head->processes)
 			{
@@ -207,7 +209,7 @@ char		*pre_parse(t_shell_config *sh)
 	dq = 0;
 	i = 0;
 	j = 0;
-	line = ft_strdup(sh->in);
+	line = ft_strdup(*(rd_config_getter(NULL)->in));
 	while (line[i])
 	{
 		if (!q && line[i] == '"' && line[(i - 1 > 0) ? i - 1 : 0] != UQ_ESCAPE)
@@ -247,7 +249,7 @@ t_job		*parse(t_shell_config *sh)
 
 	head = NULL;
 	line = pre_parse(sh);
-	sh->in = ft_strdup(line);
+	*(rd_config_getter(NULL)->in) = ft_strdup(line);
 	mark_operators(line);
 	if (check_syntax_errors(line))
 		return (NULL);

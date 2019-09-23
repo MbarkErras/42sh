@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/26 16:45:13 by merras            #+#    #+#             */
-/*   Updated: 2019/08/04 00:13:30 by merras           ###   ########.fr       */
+/*   Updated: 2019/09/22 22:46:04 by merras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,16 +61,78 @@ int		b_senv(char **in, int p)
 	return (0);
 }
 
+/*
+t_list	*list_copy(t_list *origin)
+{
+	t_list	*copy;
+	t_list	*head;
+	t_list	*head2;
+
+	copy = malloc(sizeof(t_list));
+	((t_variable *)copy->content)->value = ft_strdup(((t_variable *)origin->content)->value);
+	((t_variable *)copy->content)->flag = ((t_variable *)origin->content)->flag;
+	copy->next = NULL;
+	head = copy;
+	head2 = head;
+	origin = origin->next;
+	while (origin)
+	{		
+		copy = malloc(sizeof(t_list));
+		((t_variable *)copy->content)->value = ft_strdup(((t_variable *)origin->content)->value);
+		((t_variable *)copy->content)->flag = ((t_variable *)origin->content)->flag;
+		copy->next = NULL;
+		head2->next = copy;
+		head2 = head2->next;
+		origin = origin->next;
+	}
+	head2 = head;
+	while (head2)
+	{
+		printf("%s\n",((t_variable *)copy->content)->value);
+		head2 = head2->next;
+	}
+	return (head);
+}
+*/
+
+t_list	*list_copy(t_list *list)
+{
+	t_list *copy;
+	t_list *i;
+
+	if (!list)
+		return (NULL);
+	copy = NULL;
+	i = NULL;
+	while (list)
+	{
+		if (!i)
+		{
+			i = (t_list *)malloc(sizeof(t_list));
+			i->content = create_variable(((t_variable *)list->content)->value, ((t_variable *)list->content)->flag);
+			copy = i;
+		}
+		else
+		{
+			i->next = (t_list *)malloc(sizeof(t_list));
+			i->next->content = create_variable(((t_variable *)list->content)->value, ((t_variable *)list->content)->flag);
+			i = i->next;
+		}
+		list = list->next;
+	}
+	return (copy);
+}
+
 void	b_env_arg(char **in)
 {
 	int			i;
 	char		**env_input;
-	t_string	*save;
-	t_string	*temp;
+	t_list		*save;
+	t_list		*temp;
 
-	temp = t_string_copy(sh_config_getter(NULL)->env);
-	save = sh_config_getter(NULL)->env;
-	sh_config_getter(NULL)->env = temp;
+	temp = list_copy(sh_config_getter(NULL)->variables);
+	save = sh_config_getter(NULL)->variables;
+	sh_config_getter(NULL)->variables = temp;
 	i = b_env_updater(in);
 	env_input = in + i;
 	if (in[i])
@@ -80,8 +142,8 @@ void	b_env_arg(char **in)
 	}
 	if (!F_GET(sh_config_getter(NULL)->flags, 20))
 		print_array(env_converter());
-	t_string_del(temp);
-	sh_config_getter(NULL)->env = save;
+	list_delete(temp, hist_node_del);
+	sh_config_getter(NULL)->variables = save;
 	F_UNSET(sh_config_getter(NULL)->flags, 20);
 }
 

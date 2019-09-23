@@ -18,26 +18,40 @@ t_shell_config	*sh_config_getter(t_shell_config *sh_set)
 	return (sh_get);
 }
 
+int				env_variables_counter(t_list *v)
+{
+	int i;
+
+	i = 0;
+	while (v)
+	{
+		if (((t_variable *)v->content)->flag)
+			i++;
+		v = v->next;
+	}
+	return (i);
+}
+
 char			**env_converter(void)
 {
 	static char **array = NULL;
 	int			i;
-	t_string	*list;
+	t_list		*list;
 
-	list = sh_config_getter(NULL)->env;
+	list = sh_config_getter(NULL)->variables;
 	if (!list)
 		return (NULL);
 	if (array)
 		free(array);
 	if (!(array = (char **)malloc(sizeof(char *) *
-					(t_string_length(list) + 1))))
+					(env_variables_counter(list) + 1))))
 		exit_cleanup(EXIT_FAILURE, F_EXE);
-	i = 0;
+	i = -1;
 	while (list)
 	{
-		array[i] = list->string;
+		if (((t_variable *)list->content)->flag)
+			array[++i] = ((t_variable *)list->content)->value;
 		list = list->next;
-		i++;
 	}
 	array[i] = NULL;
 	return (array);
@@ -112,7 +126,7 @@ static void		init_shell_config(t_shell_config *sh)
 {
 	extern char	**environ;
 
-	if ((int)(sh->env = array_to_t_string(environ)) == -1)
+	if ((int)(sh->variables = array_to_list(environ)) == -1)
 		exit_cleanup(EXIT_FAILURE, F_EXE);
 	sh->hist = NULL;
 	sh->cboard = ft_strnew(0);

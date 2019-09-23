@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/27 21:49:12 by merras            #+#    #+#             */
-/*   Updated: 2019/09/23 13:34:36 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/09/23 22:53:51 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,7 @@ typedef struct	s_shell_config
 {
 	t_read			rd;
 	t_list			*hist;
-	t_string		*env;
+//	t_string		*env;
 	t_list			*variables;
 	t_job		*jobs;
 	char			*in;
@@ -415,8 +415,11 @@ char	*file_reader(int fd);
 
 /*
  * ** LOCAL VARIABLES
- * /
-
- void	*delete_variable(void *v);
-*/
+<<<<<<< HEAD
+ */
+int		ft_export(char **arg);
+int		ft_set();
+//int		ft_unset(char **arg);
+ void	delete_variable(void *v);
+ t_variable *create_variable(char *value, int flag);
 #endif

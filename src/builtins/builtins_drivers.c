@@ -6,7 +6,7 @@
 /*   By: merras <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/09 17:27:45 by merras            #+#    #+#             */
-/*   Updated: 2019/08/02 18:55:17 by merras           ###   ########.fr       */
+/*   Updated: 2019/09/22 22:46:07 by merras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,10 @@ int		is_builtin(char *cmd)
 		!ft_strcmp("setenv", cmd) ||
 		!ft_strcmp("unsetenv", cmd) ||
 		!ft_strcmp("exit", cmd) ||
-		!ft_strcmp("env", cmd))
+		!ft_strcmp("env", cmd) ||
+		!ft_strcmp("export", cmd) ||
+		!ft_strcmp("set", cmd) /*||
+		!ft_strcmp("unset", cmd)*/)
 		return (1);
 	return (0);
 }
@@ -85,5 +88,11 @@ int		builtins_dispatcher(char ***arg)
 		return (b_env(*arg));
 	if (!ft_strcmp("exit", (*arg)[0]))
 		b_exit(*arg);
+	if (!ft_strcmp("export", (*arg)[0]))
+		return (ft_export(*arg));
+	if (!ft_strcmp("set", (*arg)[0]))
+		return (ft_set(*arg));
+	/*if (!ft_strcmp("unset", (*arg)[0]))
+		return (ft_unset(*arg));*/
 	return (0);
 }
