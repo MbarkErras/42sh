@@ -6,7 +6,11 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/27 21:49:12 by merras            #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2019/09/24 12:28:45 by merras           ###   ########.fr       */
+=======
+/*   Updated: 2019/09/24 12:24:34 by yoyassin         ###   ########.fr       */
+>>>>>>> 8b2cb83256c02ffe499980e810b08c4382437c5c
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +91,6 @@ typedef struct	s_job
 {
 	t_process			*processes;
 	char				*command;
-	char				*job_string;
 	int					return_val;
 	int					flag;
 	/*

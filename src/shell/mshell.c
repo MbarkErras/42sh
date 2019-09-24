@@ -184,7 +184,7 @@ int				main(void)
 		if (!(sh.jobs = parse(&sh)))
 			continue;
 
-		/* MBARK */
+		/* MBARK*/
 		execute_jobs(sh.jobs);
 		t_job *job;
 		job = sh.jobs;
@@ -196,6 +196,6 @@ int				main(void)
 				DEBUG("job completed!");
 			job = job->next; 
 		}
-
+		
 	}
 }
