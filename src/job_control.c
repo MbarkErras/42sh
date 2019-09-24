@@ -6,7 +6,7 @@
 /*   By: merras <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/03 21:25:46 by merras            #+#    #+#             */
-/*   Updated: 2019/09/21 15:30:31 by merras           ###   ########.fr       */
+/*   Updated: 2019/09/24 02:42:29 by merras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,18 +19,17 @@ void	monitor_job(t_job *j)
 
 	jobs = sh_config_getter(NULL)->jobs;
 	m =  sh_config_getter(NULL)->monitored;
-	if (jobs)
-		return ;
-	if (jobs == j)
+	if (!jobs || !j || !m)
 	{
-		while (m && m->next)
-			m = m->next;
 		if (!m)
 			sh_config_getter(NULL)->monitored = j;
-		else
-			m->next = j;
-		sh_config_getter(NULL)->jobs = j->next;
+		return ;
 	}
+	if (jobs == j)
+		sh_config_getter(NULL)->jobs = j->next;
+	while (m->next)
+		m = m->next;
+	m->next = j;
 	while (jobs->next)
 	{
 		if (jobs->next == j)
@@ -100,6 +99,7 @@ int	jobcontrol_ground_manager(char **arg)
 		}
 		arg++;
 	}
+	return (0);
 }
 
 int ft_jobs(char **arg)

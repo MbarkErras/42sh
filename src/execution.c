@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/07 19:13:47 by merras            #+#    #+#             */
-/*   Updated: 2019/09/21 15:30:30 by merras           ###   ########.fr       */
+/*   Updated: 2019/09/24 02:42:27 by merras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,6 @@ char    *find_exec(char *exec)
 
 int		update_job_status(pid_t pid, int status, t_process *process)
 {
-	printf("updating job status\n");
 	if (pid > 0)
 	{
 		while (process)
@@ -123,11 +122,21 @@ int		update_job_status(pid_t pid, int status, t_process *process)
 
 int		job_is_stopped(t_process *process)
 {
-	printf("checking if stopped\n");
 	while (process)
 	{
 		if (!F_GET(process->jcflags, F_STOP) &&
 				!F_GET(process->jcflags, F_COMP))
+			return (0);
+		process = process->next;
+	}
+	return (1);
+}
+
+int		job_is_completed(t_process *process)
+{
+	while (process)
+	{
+		if (!F_GET(process->jcflags, F_COMP))
 			return (0);
 		process = process->next;
 	}
@@ -139,21 +148,17 @@ void	wait_for_job(t_job *job)
 	int		status;
 	pid_t	pid;
 
-	printf("1waitin\n");
-	pid = waitpid(WAIT_ANY, &status, WUNTRACED);
-	printf(">> %d\n", pid);
-	printf("1waitin\n");
-	while (!update_job_status(pid, status, job->processes)
-			&& !job_is_stopped(job->processes))
+	while (1)
 	{
-		printf("waitin\n");
-		pid = waitpid(WAIT_ANY, &status, WUNTRACED);
+		if (job_is_stopped(job->processes))
+			break ;
+		pid = waitpid(WAIT_ANY, &status, WUNTRACED | WNOHANG);
+		update_job_status(pid, status, job->processes);
 	}
 }
 
 void	put_job_in_foreground(t_job *job, int cont)
 {
-	printf("putin job is in foreground\n");
 	tcsetpgrp(STDIN_DUP, job->gid);
 	if (cont)
 	{
@@ -175,8 +180,6 @@ int		execute_process(char *path, t_process *process, pid_t gid, int bg)
 {
 	pid_t	pid;
 
-	printf("executing the professional cici\n");
-
 	if (F_GET(sh_config_getter(NULL)->flags, F_INTERACTIVE))
 	{
 		pid = getpid();
@@ -184,10 +187,7 @@ int		execute_process(char *path, t_process *process, pid_t gid, int bg)
 			gid = pid;
 		setpgid(pid, gid);
 		if (!bg)
-		{
-			printf("assert job is in foreground\n");
 			tcsetpgrp(STDIN_DUP, gid);
-		}
 		signal (SIGINT, SIG_DFL);
 		signal (SIGQUIT, SIG_DFL);
 		signal (SIGTSTP, SIG_DFL);
@@ -195,8 +195,13 @@ int		execute_process(char *path, t_process *process, pid_t gid, int bg)
 		signal (SIGTTOU, SIG_DFL);
 		signal (SIGCHLD, SIG_DFL);
 	}
-	if (execve(path, process->arg, env_converter()) == -1)
-		return (ft_perror(EXEC_NAME, NULL, F_EXE));
+	//if (execve(path, process->arg, env_converter()) == -1)
+	//	return (ft_perror(EXEC_NAME, NULL, F_EXE));
+	while (1)
+	{
+		printf("executing..\n");
+		sleep(3);
+	}
 	exit(EXIT_FAILURE);
 }
 

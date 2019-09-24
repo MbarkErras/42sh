@@ -81,7 +81,7 @@ static void		init_shell_config(t_shell_config *sh)
 	signal (SIGTSTP, SIG_IGN);
 	signal (SIGTTIN, SIG_IGN);
 	signal (SIGTTOU, SIG_IGN);
-	signal (SIGCHLD, SIG_IGN);
+	//signal (SIGCHLD, SIG_IGN);
 	sh->shell_pgid = getpid();
 	if (setpgid(sh->shell_pgid, sh->shell_pgid) < 0)
 	{
@@ -108,7 +108,7 @@ int				main(void)
 	init_shell_config(&sh);
 	while (1)
 	{
-		read_cline("r> "/*PRMPT(F_GET(sh.flags, F_LASTRET))*/, &sh);
+		read_cline("@@@@@@@r> "/*PRMPT(F_GET(sh.flags, F_LASTRET))*/, &sh);
 		if (ft_strlen(*rd_config_getter(NULL)->in))
 		{
 			list_push_back(&sh.hist, list_create_node(t_hist_construct((t_hist){ft_strdup(*rd_config_getter(NULL)->in), time(NULL), NULL, 2}), sizeof(t_hist)));
@@ -118,16 +118,30 @@ int				main(void)
 		{
 			printf("null parsing\n");
 		}
+		t_process *process;
+		process = sh.jobs->processes;
+		while (process)
+		{
+			printf("O");
+			process->jcflags = 0;
+			process = process->next;
+		}
+		printf("\n");
+		
 		execute_jobs(sh.jobs);
-		//
 		t_job *job;
 		job = sh.jobs;
 		while (job)
 		{
-			if (!job_is_stopped(job->processes))
-					monitor_job(job);
+			if (!job_is_completed(job->processes))
+			{
+				printf("MONITORING..\n");
+				monitor_job(job);
+			}
+			else
+				printf("NOT MONITORING..\n");
+
 			job = job->next; 
 		}
-		//
 	}
 }
