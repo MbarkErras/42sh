@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/07 19:13:47 by merras            #+#    #+#             */
-/*   Updated: 2019/09/24 08:25:10 by merras           ###   ########.fr       */
+/*   Updated: 2019/09/24 12:28:41 by merras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -231,7 +231,6 @@ int		execute_job(t_job *job)
 		}
 		if (!(path = find_exec(process->arg[0])))
 			return (ft_perror(EXEC_NAME, process->arg[0], N_EXE));
-		process->jcflags = 0; //should be done while parsing
 		pid = fork();
 		if (pid == 0)
 			execute_process(path, process, job->gid, F_GET(job->jcflags, F_BACKGROUND));
@@ -240,7 +239,7 @@ int		execute_job(t_job *job)
 		process->pid = pid;
 		if (F_GET(sh_config_getter(NULL)->flags, F_INTERACTIVE))
 		{
-			if (!job->gid)
+			if (!job->gid) //asdasd
 				job->gid = pid;
 			setpgid(pid, job->gid);
 		}
@@ -261,7 +260,6 @@ int		execute_jobs(t_job *jobs)
 
 	while (jobs)
 	{
-		F_UNSET(jobs->jcflags, F_BACKGROUND);
 		reset_input_mode();
 		exit = execute_job(jobs);
 		init_terminal();
