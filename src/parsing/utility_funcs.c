@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utility_funcs.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yoyassin <yoyassin@1337.ma>                +#+  +:+       +#+        */
+/*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/21 18:50:04 by yoyassin          #+#    #+#             */
-/*   Updated: 2019/09/21 23:14:14 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/09/24 12:26:48 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,12 +34,15 @@ int		set_flag(void *curr, int flag, char type)
 	if (!type || type == 1)
 	{
 		((t_process *)curr)->flag = flag;
+		((t_process *)curr)->jcflags = 0;
 		((t_process *)curr)->next = NULL;
 		return (flag == PIPE ? 1 : 2);
 	}
 	else
 	{
 		((t_job *)curr)->flag = flag;
+		((t_job *)curr)->jcflags = flag == BG
+		? F_SET(((t_job *)curr)->jcflags, F_BACKGROUND) : 0;
 		((t_job *)curr)->next = NULL;
 		return (flag == BG ? 1 : 2);
 	}
@@ -121,6 +124,7 @@ void	get_list_node(char type, void **curr, char *str)
 		*curr = (t_job *)malloc(sizeof(t_job));
 		((t_job *)*curr)->processes = get_process_list(str, type);
 		((t_job *)*curr)->command = get_cmd_string(str);
+		((t_job *)*curr)->gid = 0;
 		((t_job *)*curr)->flag = 0;
 		((t_job *)*curr)->next = NULL;
 	}
@@ -130,6 +134,7 @@ void	get_list_node(char type, void **curr, char *str)
 		((t_process *)*curr)->heredoc = NULL;
 		check_redirections(str, ((t_process *)*curr));
 		apply_expansions(((t_process *)*curr)->arg);
+		((t_process *)*curr)->jcflags = 0;
 		((t_process *)*curr)->flag = 0;
 		((t_process *)*curr)->next = NULL;
 	}

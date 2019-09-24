@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   job_control.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: merras <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/03 21:25:46 by merras            #+#    #+#             */
-/*   Updated: 2019/09/24 08:25:07 by merras           ###   ########.fr       */
+/*   Updated: 2019/09/24 12:25:39 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ int	parse_jobspec(char *jspec)
 	spec = 1;
 	while (monitored)
 	{
-		if (!ft_strncmp(monitored->job_string, jspec + 1, ft_strlen(jspec + 1)))
+		if (!ft_strncmp(monitored->command, jspec + 1, ft_strlen(jspec + 1)))
 			return (spec);
 		spec++;
 	}
