@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/07 19:13:47 by merras            #+#    #+#             */
-/*   Updated: 2019/09/24 12:28:41 by merras           ###   ########.fr       */
+/*   Updated: 2019/09/24 14:54:59 by merras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -182,6 +182,7 @@ int		execute_process(char *path, t_process *process, pid_t gid, int bg)
 {
 	pid_t	pid;
 
+
 	if (F_GET(sh_config_getter(NULL)->flags, F_INTERACTIVE))
 	{
 		pid = getpid();
@@ -197,14 +198,12 @@ int		execute_process(char *path, t_process *process, pid_t gid, int bg)
 		signal (SIGTTOU, SIG_DFL);
 		signal (SIGCHLD, SIG_DFL);
 	}
-	//if (execve(path, process->arg, env_converter()) == -1)
-	//	return (ft_perror(EXEC_NAME, NULL, F_EXE));
-	while (1)
-	{
-		printf("%d\n", pid);
-		sleep(3);
-	}
-	exit(EXIT_FAILURE);
+	if (process->arg)
+		if (!apply_redirections(process->redir) && execve(path, process->arg, env_converter()) == -1)
+			exit(EXIT_FAILURE);
+	else if (!apply_redirections(process->redir))
+		exit(EXIT_FAILURE);
+	
 }
 
 /*
@@ -218,10 +217,24 @@ int		execute_job(t_job *job)
 	t_process *process;
 	char	*path;
 	pid_t		pid;
+	int in;
+	int out;
+	int err;
+	int p[2];
 
+	in = 0;
+	err = 2;
 	process = job->processes;
 	while (process)
 	{
+		if (job->flag != BG && process->flag == PIPE)
+		{
+			if (pipe(p) < 0)
+				exit(0);  //*-*//
+			out = p[1];
+		}
+		else
+			out = 1;
 		if (is_builtin(process->arg[0]))
 		{
 			process->status = builtins_dispatcher(&process->arg);
@@ -231,9 +244,23 @@ int		execute_job(t_job *job)
 		}
 		if (!(path = find_exec(process->arg[0])))
 			return (ft_perror(EXEC_NAME, process->arg[0], N_EXE));
+		process->jcflags = 0;
 		pid = fork();
 		if (pid == 0)
+		{
+			if (in != 0)
+			{
+				dup2(in, 0);
+				//close (in);
+			}
+			if (out != 1)
+			{
+				dup2(out, 1);
+				//close (out);
+			}
+			//set err
 			execute_process(path, process, job->gid, F_GET(job->jcflags, F_BACKGROUND));
+		}
 		else if (pid < 0)
 			exit (ft_perror(EXEC_NAME, NULL, F_FRK));
 		process->pid = pid;
@@ -243,6 +270,11 @@ int		execute_job(t_job *job)
 				job->gid = pid;
 			setpgid(pid, job->gid);
 		}
+		if (in != 0)
+			close(in);
+		if (out != 1)
+			close (out);
+		in = p[0];
 		process = process->next;
 	}
 	if (!F_GET(sh_config_getter(NULL)->flags, F_INTERACTIVE))
