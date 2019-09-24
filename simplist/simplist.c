@@ -163,11 +163,11 @@ t_list	**list_pointer_address(t_list **head, t_list *node)
 	return (NULL);
 }
 
-t_list	*list_find_node(t_list *head, int(*filter)(void *))
+t_list	*list_find_node(t_list *head, int(*filter)(void *, void *), void *p)
 {
 	while (head)
 	{
-		if (filter(head))
+		if (filter(head, p))
 			return (head);
 		head = head->next;
 	}

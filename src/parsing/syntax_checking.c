@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/14 19:50:25 by yoyassin          #+#    #+#             */
-/*   Updated: 2019/09/21 18:40:51 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/09/23 22:29:40 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,22 @@ void	counter(char *line, int *j, int o)
 	}
 }
 
+int		redir_syntax(char *line, int i)
+{
+	if (IS_REDIR_OP(i, _OR, _EQ))
+	{
+		if (line[i] != APP_OUT_RED_OP && line[i] != HEREDOC_OP
+		&& ((line[i + 1] == '&' && !ft_isdigit(line[i + 2]))
+		|| (line[(i - 1 > 0) ? i - 1 : 0] == '&' &&
+		line[i + 1] == '&')))
+			return (0);
+		else if ((line[i] == APP_OUT_RED_OP || line[i] == HEREDOC_OP)
+		&& line[i + 2] == '&')
+			return (0);
+	}
+	return (1);
+}
+
 int		get_operands(char *line, int *i, char t_op, int *o_i)
 {
 	int		j;
@@ -55,7 +71,7 @@ int		get_operands(char *line, int *i, char t_op, int *o_i)
 		t_op ? (j = *i + 2)
 		: (j = *i + 1);
 		counter(line, &j, 1);
-		if ((j != *i + 1) &&
+		if ((j != *i + 1) && redir_syntax(line, *i) &&
 		is_not_blank(line, *i = t_op ? (*i + 2) : (*i + 1), j))
 		{
 			*i = j - 2;

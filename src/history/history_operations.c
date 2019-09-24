@@ -1,5 +1,6 @@
 #include "mshell.h"
 
+
 int	history_drange(int *start, int *end, char *arg)
 {
 	char *dash;
@@ -53,7 +54,7 @@ int	history_delete(char **in)
 	return (0);
 }
 
-int	hist_new(void *e)
+int	hist_new(void *e, void *p)
 {
 	t_hist *entry = (t_hist *)e;
 	if (F_GET(entry->flags, F_NEW))
@@ -81,7 +82,7 @@ int	history_write(char **in, char c)
 	if ((fd = open(fn, c == 'a' ? O_APPEND : O_WRONLY) == -1))
 			return (ft_perror(EXEC_NAME, NULL, B_HFL)); //open error
 	head = sh_config_getter(NULL)->hist;
-	head = c == 'a' ? list_find_node(head, hist_new) : head;
+	head = c == 'a' ? list_find_node(head, hist_new, NULL) : head;
 	while (head)
 	{
 		fn = ((t_hist *)(head->content))->value;

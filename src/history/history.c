@@ -6,7 +6,7 @@
 /*   By: merras <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/03 21:31:42 by merras            #+#    #+#             */
-/*   Updated: 2019/09/14 20:08:16 by merras           ###   ########.fr       */
+/*   Updated: 2019/09/23 23:35:32 by mmostafa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,47 @@ int	history_turing_iterator(char *flagset, char **in)
 	}
 	return (0);
 }
+
+char    *search_in_history(t_list *head, int to_find)
+{
+	head = list_indexed_node(head, POSI(to_find, list_size(head)));
+	if (!head)
+		return (NULL);
+	return (((t_hist *)head->content)->value);
+}
+
+int		word_search_filter(void *n, void *p)
+{
+	t_list *node;
+	char	*strstr;
+
+	node = (t_list *)n;
+	return ((strstr = ft_strstr(((t_hist *)node->content)->value, p)) == ((t_hist *)node->content)->value ? 1 : 0);
+}
+
+char    *result_giving(char *to_search, t_list *his)
+{
+	char    *his_cmd;
+	t_list *node;
+
+	if (to_search[0] != '!')
+		return (NULL);
+	if (to_search[1] == '!' && to_search[2] == '\0')
+	{
+		his = list_head_tail(his, 1);
+		return (((t_hist *)his->content)->value);
+	}
+	his_cmd = ft_strsub(to_search, 1, ft_strlen(to_search) - 1);
+	if (ft_isnumber(his_cmd))
+		return (search_in_history(his, ft_atoi(his_cmd)));
+	else
+	{
+		if ((node = list_find_node(his, word_search_filter, his_cmd)))
+			return (((t_hist *)node->content)->value);
+	}
+	return (NULL);
+}
+
 
 int	b_history(char **in)
 {

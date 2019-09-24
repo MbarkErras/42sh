@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/05 04:19:50 by yoyassin          #+#    #+#             */
-/*   Updated: 2019/09/21 18:58:11 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/09/23 19:13:01 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ static void		append_redir(t_redir **h, t_redir **c, t_redir **t)
 }
 
 /*
-** should do error checking when parsing is done
+** should do error checking when parsing is done // cat > file | "wc -l | wc" > \$USER:"$USER"
 */
 
 static t_redir	*get_node(void)
@@ -36,6 +36,9 @@ static t_redir	*get_node(void)
 
 	if (!(node = (t_redir *)malloc(sizeof(t_redir))))
 		exit(2);
+	node->src_fd = -1;
+	node->dst_fd = -1;
+	node->file = NULL;
 	node->next = NULL;
 	return (node);
 }
@@ -48,7 +51,7 @@ void			get_redir_type(t_redir *curr, char *str, int i)
 		curr->type = O_APPEND;
 	if (str[i + 1] != '&')
 	{
-		if (curr->type != O_APPEND && str[i - 1] == '&')
+		if (curr->type != O_APPEND && str[i - 1 >= 0 ? i - 1 : 0] == '&')
 		{
 			curr->src_fd = BOTH_FDS;
 			str[i - 1] = BLANK;

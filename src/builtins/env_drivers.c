@@ -6,6 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/09 18:36:04 by merras            #+#    #+#             */
+/*   Updated: 2019/09/23 23:59:12 by yoyassin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,9 +61,7 @@ char	*read_env(char *key)
 	char	**env;
 	char	*value;
 
-	printf("HNA !!\n");
 	env = env_converter();
-	printf("MACHI HNA !!\n");
 	if (!env || !key)
 		return (NULL);
 	while (*env)

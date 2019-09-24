@@ -13,7 +13,7 @@ SRC_SUBDIRS = builtins execution expansions history line_editing parsing shell
 
 SRC_BUILTIN = $(addprefix builtins/, b_cd.c builtins.c builtins_drivers.c  env_drivers.c error_handling.c is_delimited.c variables.c)
 SRC_EXECUTION = $(addprefix execution/, execution.c job_control.c redirections.c)
-SRC_EXPANSION = $(addprefix expansions/, escape_god.c expansions.c)
+SRC_EXPANSION = $(addprefix expansions/, globbing.c escape_god.c expansions.c)
 SRC_HISTORY = $(addprefix history/, history.c history_file_operations.c history_operations.c history_ps.c history_utilities.c utils.c)
 SRC_LINEEDITING = $(addprefix line_editing/, autocompletion.c clipboard.c command_line_editor.c cursor_motion.c dispatchers.c move_line.c move_word.c read_input.c terminal.c)
 SRC_PARSING = $(addprefix parsing/, build_job_list.c build_parse_list.c parse.c parse_heredoc.c parse_redir.c parse_redir2.c quoting.c syntax_checking.c utility_funcs.c)
