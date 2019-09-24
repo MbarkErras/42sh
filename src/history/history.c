@@ -6,7 +6,7 @@
 /*   By: merras <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/03 21:31:42 by merras            #+#    #+#             */
-/*   Updated: 2019/09/23 23:35:32 by mmostafa         ###   ########.fr       */
+/*   Updated: 2019/09/24 12:02:40 by merras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,11 +59,13 @@ int		word_search_filter(void *n, void *p)
 	return ((strstr = ft_strstr(((t_hist *)node->content)->value, p)) == ((t_hist *)node->content)->value ? 1 : 0);
 }
 
-char    *result_giving(char *to_search, t_list *his)
+char    *result_giving(char *to_search)
 {
 	char    *his_cmd;
+	t_list	*his;
 	t_list *node;
 
+	his = sh_config_getter(NULL)->hist;
 	if (to_search[0] != '!')
 		return (NULL);
 	if (to_search[1] == '!' && to_search[2] == '\0')

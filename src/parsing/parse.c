@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/27 16:25:14 by merras            #+#    #+#             */
-/*   Updated: 2019/09/23 23:30:42 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/09/24 04:48:09 by merras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -257,6 +257,6 @@ t_job		*parse(t_shell_config *sh)
 	cmd_chain = ft_strsplit(line, SEMI_COL);
 	head = get_jobs(cmd_chain, get_bg_jobs(line));
 	t_job *tmp = head;
-	print_parsing_res(tmp);
+	//print_parsing_res(tmp);
 	return (head);
 }

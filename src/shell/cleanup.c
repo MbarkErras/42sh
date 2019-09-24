@@ -1,27 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_putstr.c                                        :+:      :+:    :+:   */
+/*   cleanup.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: merras <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/10/12 09:52:47 by merras            #+#    #+#             */
-/*   Updated: 2019/09/24 09:08:25 by merras           ###   ########.fr       */
+/*   Created: 2019/07/29 09:46:51 by merras            #+#    #+#             */
+/*   Updated: 2019/08/04 00:01:30 by merras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "mshell.h"
 
-void	ft_putstr(char const *s)
+void	exit_cleanup(int exit_status, int err)
 {
-	int i;
+	t_shell_config *sh;
 
-	i = 0;
-	if (!s)
-		return ;
-	while (s[i] != '\0')
-	{
-		ft_putchar(s[i]);
-		i++;
-	}
+	sh = sh_config_getter(NULL);
+	if (err != -1)
+		ft_perror(EXEC_NAME, NULL, err);
+	ft_putchar('\n');
+	free(env_converter());
+	exit(exit_status);
 }

@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/26 15:56:54 by merras            #+#    #+#             */
-/*   Updated: 2019/09/20 02:20:36 by merras           ###   ########.fr       */
+/*   Updated: 2019/09/24 12:02:37 by merras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,8 @@ void			read_cline(char *prompt, t_shell_config *sh)
 	rd_config_getter(&sh->rd);
 	while (F_GET(sh->rd.flags, F_RDHALT) && read(1, sh->rd.b, 1))
 	{
+		if (sh->rd.b[0] == CTRL_R)
+			reverse_i_search(&sh->rd);
 		if (sh->rd.b[0] == ESC)
 			F_SET(sh->rd.flags, F_ESC);
 		else if (TERMINAL_DELETE(sh->rd.b[0]))

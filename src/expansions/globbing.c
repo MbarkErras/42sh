@@ -6,7 +6,7 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/22 15:39:47 by yoyassin          #+#    #+#             */
-/*   Updated: 2019/09/23 18:56:39 by yoyassin         ###   ########.fr       */
+/*   Updated: 2019/09/24 03:40:54 by merras           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ char			*get_pattern(char *line, int *i, int *pos, int *start)
 	&& line[*i] != BLANK && IS_OPERATOR(*i, _AND, _NEQ))
 		(*i)++;
 	return (ft_strsub(line, *start, *i - *start));
+	return (NULL);
 }
 
 int				expand_wildcard(char **line, char *gl_pattern, int start, int i)
