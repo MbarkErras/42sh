@@ -6,7 +6,11 @@
 /*   By: merras <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/09 17:27:45 by merras            #+#    #+#             */
+<<<<<<< HEAD:src/builtins/builtins_drivers.c
 /*   Updated: 2019/09/22 22:46:07 by merras           ###   ########.fr       */
+=======
+/*   Updated: 2019/09/21 15:30:26 by merras           ###   ########.fr       */
+>>>>>>> job_control:src/builtins_drivers.c
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,10 +70,17 @@ int		is_builtin(char *cmd)
 		!ft_strcmp("setenv", cmd) ||
 		!ft_strcmp("unsetenv", cmd) ||
 		!ft_strcmp("exit", cmd) ||
+<<<<<<< HEAD:src/builtins/builtins_drivers.c
 		!ft_strcmp("env", cmd) ||
 		!ft_strcmp("export", cmd) ||
 		!ft_strcmp("set", cmd) /*||
 		!ft_strcmp("unset", cmd)*/)
+=======
+		!ft_strcmp("jobs", cmd) ||
+		!ft_strcmp("fg", cmd) ||
+		!ft_strcmp("bg", cmd) ||
+		!ft_strcmp("env", cmd))
+>>>>>>> job_control:src/builtins_drivers.c
 		return (1);
 	return (0);
 }
@@ -87,6 +98,7 @@ int		builtins_dispatcher(char ***arg)
 	if (!ft_strcmp("env", (*arg)[0]))
 		return (b_env(*arg));
 	if (!ft_strcmp("exit", (*arg)[0]))
+<<<<<<< HEAD:src/builtins/builtins_drivers.c
 		b_exit(*arg);
 	if (!ft_strcmp("export", (*arg)[0]))
 		return (ft_export(*arg));
@@ -94,5 +106,12 @@ int		builtins_dispatcher(char ***arg)
 		return (ft_set(*arg));
 	/*if (!ft_strcmp("unset", (*arg)[0]))
 		return (ft_unset(*arg));*/
+=======
+		return (b_env(*arg));
+	if (!ft_strcmp("jobs", (*arg)[0]))
+		return (ft_jobs(*arg));
+	if (!ft_strcmp("fg", (*arg)[0]) || !ft_strcmp("bg", (*arg)[0]))
+		return (jobcontrol_ground_manager(*arg));
+>>>>>>> job_control:src/builtins_drivers.c
 	return (0);
 }

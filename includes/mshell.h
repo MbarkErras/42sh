@@ -6,8 +6,12 @@
 /*   By: yoyassin <yoyassin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/27 21:49:12 by merras            #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2019/09/22 22:46:13 by merras           ###   ########.fr       */
 /*   Updated: 2019/09/21 20:16:46 by yoyassin         ###   ########.fr       */
+=======
+/*   Updated: 2019/09/24 02:42:34 by merras           ###   ########.fr       */
+>>>>>>> job_control
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +87,11 @@ typedef struct	s_process
 typedef struct	s_job
 {
 	t_process			*processes;
+<<<<<<< HEAD
 	char				*command;
+=======
+	char				*job_string;
+>>>>>>> job_control
 	int					return_val;
 	int					flag;
 /*
@@ -116,12 +124,19 @@ typedef struct	s_shell_config
 {
 	t_read			rd;
 	t_list			*hist;
+<<<<<<< HEAD
 //	t_string		*env;
 	t_list			*variables;
 	t_job		*jobs;
+=======
+	t_string		*env;
+	t_job			*jobs;
+	t_job			*monitored; //a list contain monitored jobs
+>>>>>>> job_control
 	char			*in;
 	char			*cboard;
 	int				flags;
+	pid_t			shell_pgid;
 
 	struct termios	saved_attr;
 }				t_shell_config;
@@ -384,14 +399,31 @@ void			b_exit(char **in);
 ** JOB CONTROL
 */
 
+//for jobs
 # define F_BACKGROUND 0
+# define F_JOB_STOPPED 1
+//for shell
 # define F_INTERACTIVE 0
+//for processes
 # define F_STOP 0
 # define F_COMP 1
 
+<<<<<<< HEAD
 // int				execute_jobs(t_job *jobs);
 // int				execute_job(t_job *job);
 // int				execute_process(t_process *process, pid_t gid, int fg);
+=======
+int				execute_jobs(t_job *jobs);
+int				execute_job(t_job *job);
+int				execute_process(char *path, t_process *process, pid_t gid, int fg);
+void	monitor_job(t_job *j);
+int		job_is_stopped(t_process *process);
+int		job_is_completed(t_process *process);
+void	put_job_in_foreground(t_job *j, int cont);
+void	monitor_job(t_job *j);
+int		jobcontrol_ground_manager(char **arg);
+int		ft_jobs();
+>>>>>>> job_control
 
 /*
 ** HISTORY
@@ -413,6 +445,7 @@ int     history_write(char **in, char c);
 int     history_read(char **in, char c);
 void	setter(char *set, char *elements);
 char	*file_reader(int fd);
+<<<<<<< HEAD
 
 /*
  * ** LOCAL VARIABLES
@@ -423,4 +456,6 @@ int		ft_set();
 //int		ft_unset(char **arg);
  void	delete_variable(void *v);
  t_variable *create_variable(char *value, int flag);
+=======
+>>>>>>> job_control
 #endif

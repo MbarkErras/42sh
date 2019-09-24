@@ -6,7 +6,11 @@
 /*   By: merras <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/27 22:46:55 by merras            #+#    #+#             */
+<<<<<<< HEAD:src/line_editing/terminal.c
 /*   Updated: 2019/09/21 19:50:53 by mmostafa         ###   ########.fr       */
+=======
+/*   Updated: 2019/09/19 23:07:22 by merras           ###   ########.fr       */
+>>>>>>> job_control:src/terminal.c
 /*                                                                            */
 /* ************************************************************************** */
 
